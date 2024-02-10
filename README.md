@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# George Vlassis - Portfolio Projects
 
-## Getting Started
+Welcome to my GitHub repository, where I showcase my expertise in software engineering, with a focus on blockchain technologies and smart contract security. Here, you'll find a collection of projects that exemplify my skills in developing robust, scalable, and secure applications.
 
-First, run the development server:
+## About Me
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+I'm George Vlassis, a Software Engineer and Smart Contract Auditor based in Ioannina, Greece. My passion for technology drives me to explore the depths of blockchain and develop solutions that not only meet but exceed industry standards for security and efficiency. With expertise in Solidity, JavaScript, TypeScript, React, Next.js, and Node.js, I aim to contribute to the blockchain ecosystem by ensuring the integrity and reliability of smart contracts and decentralized applications.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Featured Projects
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Below are some of the projects I'm proud to have worked on. Each project includes a brief description, the technology stack used, and my contributions.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Project 1: Decentralized Voting System
 
-## Learn More
+- **Description**: A secure and transparent voting system built on Ethereum, leveraging smart contracts for immutability and transparency.
+- **Technology Stack**: Solidity, Web3.js, React, Node.js
+- **My Role**: Led the development of smart contracts and the front-end application, ensuring security and user-friendly design.
 
-To learn more about Next.js, take a look at the following resources:
+### Project 2: Smart Contract Audit Reports
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Description**: Comprehensive audit reports for various decentralized applications, focusing on identifying and mitigating potential vulnerabilities.
+- **Technology Stack**: Solidity, Hardhat, Mythril
+- **My Role**: Conducted thorough audits, provided recommendations for improvements, and ensured best practices in smart contract development.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Skills
 
-## Deploy on Vercel
+- **Languages**: Solidity, JavaScript, TypeScript
+- **Frameworks/Libraries**: React, Next.js, Node.js
+- **Tools**: Hardhat, Truffle, Ganache, Mythril
+- **Areas of Expertise**: Smart Contract Development, Smart Contract Auditing, Full-Stack Web Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Connect with Me
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+I'm always open to collaborating on projects, sharing insights, or exploring new opportunities. Feel free to connect with me through the following channels:
+
+- **LinkedIn**: [Your LinkedIn Profile URL]
+- **Portfolio**: [Your Portfolio Website URL]
+
+Thank you for visiting my repository. I look forward to contributing to innovative and impactful projects in the blockchain space.
