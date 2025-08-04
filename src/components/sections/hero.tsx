@@ -1,4 +1,5 @@
 import { CircleArrowDownIcon, ZapIcon } from "lucide-react";
+import Link from "next/link";
 
 import AnimatedGridPattern from "@/components/animated-grid-pattern";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +19,7 @@ export function Hero() {
           <ZapIcon className="fill-current" />
           Software Engineer
         </Badge>
-        <h1 className="mt-6 text-4xl !leading-[1.2] font-bold tracking-tight sm:text-5xl md:text-6xl">
+        <h1 className="mt-6 text-4xl leading-tight font-bold tracking-tight sm:text-5xl md:text-6xl">
           Building Scalable & Engaging Web Experiences
         </h1>
         <p className="mt-6 text-lg md:text-lg">
@@ -29,8 +30,10 @@ export function Hero() {
           together! 🚀
         </p>
         <div className="mt-12 flex items-center justify-center gap-4">
-          <Button size="lg" className="rounded-full text-base">
-            See What I Do <CircleArrowDownIcon className="size-5" />
+          <Button size="lg" className="rounded-full text-base" asChild>
+            <Link href="#about">
+              See What I Do <CircleArrowDownIcon className="size-5" />
+            </Link>
           </Button>
         </div>
       </div>

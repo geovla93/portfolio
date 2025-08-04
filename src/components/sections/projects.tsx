@@ -1,9 +1,18 @@
 import { ExternalLinkIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
+import { GithubIcon } from "@/components/icons/github";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GithubIcon } from "@/components/icons/github";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type ProjectCardProps = {
   title: string;
@@ -23,8 +32,7 @@ function ProjectCard({
   githubUrl,
 }: ProjectCardProps) {
   return (
-    <div className="group border-accent hover:border-primary/50 relative flex flex-col overflow-hidden rounded-xl border transition-all">
-      {/* Project Image */}
+    <Card className="group border-accent hover:border-primary/50 relative overflow-hidden pt-0 transition-all">
       <div className="bg-accent relative h-64 overflow-hidden">
         <Image
           src={image}
@@ -33,46 +41,40 @@ function ProjectCard({
           fill
         />
       </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-6">
-        <h3 className="mb-2 text-xl font-semibold">{title}</h3>
-        <p className="text-muted-foreground mb-4">{description}</p>
-
-        {/* Technologies */}
-        <div className="mb-6 flex flex-wrap gap-2">
-          {technologies.map((tech) => (
-            <Badge key={tech} variant="secondary" className="rounded-full">
-              {tech}
-            </Badge>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="mt-auto flex gap-3">
-          {liveUrl && (
-            <Button variant="default" className="rounded-full" asChild>
-              <a href={liveUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLinkIcon className="mr-1 h-4 w-4" />
-                Live Demo
-              </a>
-            </Button>
-          )}
-          {githubUrl && (
-            <Button
-              variant="outline"
-              className="rounded-full shadow-none"
-              asChild
-            >
-              <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-                <GithubIcon className="mr-1 h-4 w-4" />
-                View Code
-              </a>
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
+      <CardHeader>
+        <CardTitle className="text-xl">{title}</CardTitle>
+        <CardDescription className="text-base">{description}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-2">
+        {technologies.map((tech) => (
+          <Badge key={tech} variant="secondary" className="rounded-full">
+            {tech}
+          </Badge>
+        ))}
+      </CardContent>
+      <CardFooter className="mt-auto gap-3">
+        {liveUrl && (
+          <Button variant="default" className="rounded-full" asChild>
+            <Link href={liveUrl} target="_blank" rel="noopener noreferrer">
+              <ExternalLinkIcon className="mr-1 size-4" />
+              Live Demo
+            </Link>
+          </Button>
+        )}
+        {githubUrl && (
+          <Button
+            variant="outline"
+            className="rounded-full shadow-none"
+            asChild
+          >
+            <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
+              <GithubIcon className="mr-1 size-4" />
+              View Code
+            </Link>
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
   );
 }
 
@@ -119,11 +121,9 @@ export function Projects() {
   return (
     <section id="projects" className="relative px-6 py-20">
       <div className="mx-auto max-w-screen-md">
-        <div className="mb-12 text-center">
-          <Badge variant="secondary" className="mb-4">
-            Projects
-          </Badge>
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <div className="text-center">
+          <Badge variant="secondary">Projects</Badge>
+          <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
             Featured Work
           </h2>
           <p className="text-muted-foreground mt-2 text-lg sm:mt-4">
@@ -131,7 +131,7 @@ export function Projects() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
           {projects.map((project, index) => (
             <ProjectCard key={index} {...project} />
           ))}

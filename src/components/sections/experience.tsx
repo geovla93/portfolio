@@ -20,8 +20,8 @@ const ExperienceItem = ({
   return (
     <div className="relative pl-8 not-last:pb-12">
       {/* Timeline line */}
-      <div className="bg-muted absolute top-2.5 left-0 h-full w-[2px] group-first:top-6 group-first:h-[calc(100%-24px)]">
-        <div className="border-primary bg-background absolute top-0 -left-[5px] h-3 w-3 rounded-full border-2" />
+      <div className="bg-muted absolute top-2.5 left-0 h-full w-0.5 group-first:top-6 group-first:h-[calc(100%-24px)]">
+        <div className="border-primary bg-background absolute top-0 -left-[5px] size-3 rounded-full border-2" />
       </div>
 
       {/* Content */}
@@ -83,11 +83,9 @@ export const Experience = () => {
   return (
     <section id="experience" className="relative px-6 py-20">
       <div className="mx-auto max-w-screen-md">
-        <div className="mb-12 text-center">
-          <Badge variant="secondary" className="mb-4">
-            Experience
-          </Badge>
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <div className="text-center">
+          <Badge variant="secondary">Experience</Badge>
+          <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
             Professional Journey
           </h2>
           <p className="text-muted-foreground mt-2 text-lg sm:mt-4">
@@ -95,7 +93,7 @@ export const Experience = () => {
           </p>
         </div>
 
-        <div className="relative">
+        <div className="relative mt-12">
           {experiences.map((experience, index) => (
             <ExperienceItem key={index} {...experience} />
           ))}

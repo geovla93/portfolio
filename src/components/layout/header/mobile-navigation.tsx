@@ -27,7 +27,7 @@ export function MobileNavigation({
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen} {...props}>
-      <DropdownMenuTrigger className="md:hidden" asChild>
+      <DropdownMenuTrigger className="order-last md:hidden" asChild>
         <Button variant="ghost" size="icon">
           {isOpen ? (
             <XIcon className="size-6" />
