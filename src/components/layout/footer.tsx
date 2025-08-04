@@ -10,7 +10,7 @@ type FooterProps = React.ComponentProps<"footer">;
 export function Footer({ className, ...props }: FooterProps) {
   return (
     <footer className={cn("", className)} {...props}>
-      <div className="container mx-auto flex flex-col-reverse items-center justify-between gap-x-2 gap-y-5 px-4 py-6 sm:flex-row sm:px-6 lg:px-8 xl:px-0 2xl:px-10">
+      <div className="container mx-auto flex max-w-7xl flex-col-reverse items-center justify-between gap-x-2 gap-y-5 px-4 py-6 sm:flex-row sm:px-6 lg:px-8 xl:px-0 2xl:px-10">
         <span className="text-muted-foreground">
           &copy; {new Date().getFullYear()} George Vlassis. All rights reserved.
         </span>

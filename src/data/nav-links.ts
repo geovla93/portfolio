@@ -5,7 +5,7 @@ export type NavLink = {
 
 export const navLinks = [
   { label: "About", hash: "about" },
-  { label: "Tech Stack", hash: "tech-stack" },
+  { label: "Experience", hash: "experience" },
   { label: "Projects", hash: "projects" },
   { label: "Contact", hash: "contact" },
 ] as const satisfies NavLink[];
