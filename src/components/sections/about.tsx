@@ -5,7 +5,7 @@ import Link from "next/link";
 import { GithubIcon } from "@/components/icons/github";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import DownloadButton from "../download-button";
+import { DownloadButton } from "@/components/download-button";
 
 export function About() {
   return (

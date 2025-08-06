@@ -12,7 +12,7 @@ type DownloadButtonProps = Omit<
   filename?: string;
 };
 
-export default function DownloadButton({
+export function DownloadButton({
   children,
   filename,
   href,
