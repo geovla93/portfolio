@@ -8,27 +8,28 @@ export type Experience = {
 
 export const experiences = [
   {
-    title: "Senior Full Stack Developer",
-    company: "TechCorp Solutions",
-    period: "2021 - Present",
+    title: "Vice President of Product",
+    company: "Cyberscope",
+    period: "June 2025 - Present",
     description:
-      "Led the development of enterprise-scale web applications, mentored junior developers, and implemented best practices for code quality and performance optimization.",
-    technologies: ["React", "Node.js", "TypeScript", "AWS", "MongoDB"],
+      "Leading the vision and execution of Cyberscope's blockchain security SaaS platforms, I define the product roadmap and prioritize features that drive both customer value and market differentiation. I coordinate engineering, auditing, and design teams to deliver scalable, secure solutions—aligning technical efforts with evolving compliance requirements and business objectives. My work has accelerated platform growth and improved operational efficiency by embedding security best practices into every stage of development.",
+    technologies: [
+      "React",
+      "Next.js",
+      "Node.js",
+      "MongoDB",
+      "TypeScript",
+      "AWS",
+      "MongoDB",
+      "Docker",
+    ],
   },
   {
-    title: "Full Stack Developer",
-    company: "Digital Innovations Inc",
-    period: "2019 - 2021",
+    title: "Software Engineer",
+    company: "Cyberscope",
+    period: "October 2022 - May 2025",
     description:
-      "Developed and maintained multiple client projects, implemented responsive designs, and integrated third-party APIs for enhanced functionality.",
-    technologies: ["React", "Express.js", "PostgreSQL", "Docker", "Redis"],
-  },
-  {
-    title: "Frontend Developer",
-    company: "WebTech Studios",
-    period: "2018 - 2019",
-    description:
-      "Created responsive and interactive user interfaces, collaborated with designers, and optimized application performance.",
-    technologies: ["React", "JavaScript", "SASS", "Webpack", "Jest"],
+      "Designed and implemented core web platform features using Next.js, Node.js, and MongoDB, ensuring high performance and maintainability. Conducted formal smart contract audits—identifying critical Solidity vulnerabilities and advising on remediation in DeFi and NFT projects. Enhanced internal auditing tools, streamlining vulnerability analysis workflows and bolstering overall protocol security.",
+    technologies: ["React", "Next.js", "Node.js", "MongoDB", "Solidity"],
   },
 ] as const satisfies Experience[];

@@ -9,39 +9,42 @@ export type Project = {
 
 export const projects = [
   {
-    title: "E-Commerce Platform",
+    title: "VolBoost",
     description:
-      "A full-featured e-commerce platform with real-time inventory management, payment processing, and admin dashboard.",
+      "VolBoost is a DeFi automation tool that helps token projects boost their trading volume, liquidity, and visibility through automated trading. The system operates through a Telegram bot interface and smart contracts deployed on multiple blockchain networks.",
     image: "/placeholder.svg",
-    technologies: ["Next.js", "TypeScript", "Stripe", "Prisma", "PostgreSQL"],
-    liveUrl: "https://ecommerce-demo.com",
-    githubUrl: "https://github.com/username/ecommerce",
+    technologies: ["Node.js", "TypeScript", "Viem", "Telegraf", "Solidity"],
+    liveUrl: "https://t.me/volboost_bot",
   },
   {
-    title: "AI Task Manager",
+    title: "Minu",
     description:
-      "Smart task management app that uses AI to categorize, prioritize, and suggest optimal task scheduling.",
+      "Minu is a comprehensive Web3 DeFi platform built on the Binance Smart Chain (BSC) featuring a cryptocurrency mining game and decentralized exchange.",
     image: "/placeholder.svg",
-    technologies: ["React", "Python", "TensorFlow", "FastAPI", "MongoDB"],
-    liveUrl: "https://ai-taskmanager.com",
-    githubUrl: "https://github.com/username/ai-taskmanager",
+    technologies: [
+      "React",
+      "Next.js",
+      "Solidity",
+      "Viem",
+      "Wagmi",
+      "TypeScript",
+      "Motion",
+    ],
+    liveUrl: "https://minu.com",
   },
   {
-    title: "Real-time Chat Application",
+    title: "My Portfolio",
     description:
-      "Feature-rich chat application with real-time messaging, file sharing, and video calls.",
+      "A personal portfolio website showcasing my projects, experiences, and skills in web development.",
     image: "/placeholder.svg",
-    technologies: ["React", "Socket.io", "WebRTC", "Node.js", "Redis"],
-    liveUrl: "https://chatapp-demo.com",
-    githubUrl: "https://github.com/username/chat-app",
-  },
-  {
-    title: "AI Image Generator",
-    description:
-      "An AI image generator that uses a model to generate images based on a prompt.",
-    image: "/placeholder.svg",
-    technologies: ["React", "Next.js", "Tailwind CSS", "Shadcn UI"],
-    liveUrl: "https://ai-image-generator.com",
-    githubUrl: "https://github.com/username/ai-image-generator",
+    technologies: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "Motion",
+    ],
+    liveUrl: "https://geovla.dev",
   },
 ] as const satisfies Project[];
