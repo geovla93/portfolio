@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://geovla.dev/sitemap.xml",
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL}/sitemap.xml`,
   };
 }
