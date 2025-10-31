@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     description:
       "Explore my portfolio showcasing smart contract audits, SaaS platforms, and full-stack projects built with modern web technologies.",
     url: "/",
-    siteName: "George Vlassis Portfolio",
+    siteName: "George Vlassis — Software Engineer",
     images: {
       url: "/og-image.png",
       width: 1200,
