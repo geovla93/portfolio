@@ -20,7 +20,7 @@ async function sendFollowUpEmail(name: string, to: string) {
     subject: "Request received",
     html: `<p>Hi ${name},</p>
     <p>Thank you for reaching out! I have received your message and will get back to you as soon as possible.</p>
-    <p>Best regards,<br/>Geovla</p>`,
+    <p>Best regards,<br/>George Vlassis</p>`,
   });
 }
 
