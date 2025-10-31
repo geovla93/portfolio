@@ -27,7 +27,7 @@ export function About() {
                 solutions to complex problems and sharing knowledge with the
                 developer community.
               </p>
-              <div className="mt-6 flex flex-wrap justify-start gap-4">
+              <div className="mt-6 flex justify-center gap-4 md:justify-start">
                 <Button className="rounded-full" asChild>
                   <Link href="https://github.com/geovla93" target="_blank">
                     <GithubIcon className="size-5" />
@@ -44,15 +44,14 @@ export function About() {
                 </DownloadButton>
               </div>
             </div>
-            <div className="h-auto w-full">
-              <div className="bg-accent relative h-full w-full overflow-hidden rounded-2xl">
-                <Image
-                  src="/placeholder.svg"
-                  alt="placeholder image"
-                  className="object-cover"
-                  fill
-                />
-              </div>
+            <div className="bg-accent relative h-full min-h-96 w-full overflow-hidden rounded-2xl">
+              <Image
+                src="/images/me.jpg"
+                alt="placeholder image"
+                className="h-full w-full object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                fill
+              />
             </div>
           </div>
         </div>
