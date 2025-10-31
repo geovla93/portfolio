@@ -16,12 +16,16 @@ export async function sendContactRequest(
   _prevState: ActionResponse<typeof ContactFormSchema> | null,
   formData: FormData,
 ): Promise<ActionResponse<typeof ContactFormSchema>> {
+  const rawValues = Object.fromEntries(formData.entries());
+
   const verification = await checkBotId();
   if (verification.isBot) {
-    return { success: false, message: "Bot submissions are not allowed." };
+    return {
+      success: false,
+      values: rawValues as z.core.input<typeof ContactFormSchema>,
+      message: "Bot submissions are not allowed.",
+    };
   }
-
-  const rawValues = Object.fromEntries(formData.entries());
 
   const parsedValues = z.safeParse(ContactFormSchema, rawValues);
   if (!parsedValues.success) {
