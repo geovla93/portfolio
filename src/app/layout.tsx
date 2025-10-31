@@ -44,13 +44,40 @@ export const metadata: Metadata = {
     "Drizzle ORM",
   ],
   applicationName: "Portfolio",
-  authors: [{ name: "George Vlassis" }],
+  authors: { name: "George Vlassis", url: "https://geovla.dev" },
   creator: "George Vlassis",
   publisher: "George Vlassis",
   alternates: {
     canonical: "/",
   },
   category: "technology",
+  openGraph: {
+    type: "website",
+    title: "George Vlassis — Software Engineer",
+    description:
+      "Explore my portfolio showcasing smart contract audits, SaaS platforms, and full-stack projects built with modern web technologies.",
+    url: "/",
+    images: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "George Vlassis Portfolio",
+    },
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "George Vlassis — Software Engineer",
+    description:
+      "Full-stack engineer & blockchain auditor. Building secure, scalable, and elegant software.",
+    creator: "@GeorgeVlassis",
+    site: "@GeorgeVlassis",
+    images: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "George Vlassis Portfolio",
+    },
+  },
 };
 
 export default function RootLayout({
