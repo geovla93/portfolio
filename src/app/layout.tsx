@@ -79,6 +79,10 @@ export const metadata: Metadata = {
       alt: "George Vlassis Portfolio",
     },
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
