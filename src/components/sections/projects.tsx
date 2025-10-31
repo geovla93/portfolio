@@ -73,7 +73,7 @@ function ProjectCard({
 export function Projects() {
   return (
     <section id="projects" className="relative px-6 py-20">
-      <div className="mx-auto max-w-screen-md">
+      <div className="mx-auto max-w-3xl">
         <div className="text-center">
           <Badge variant="secondary">Projects</Badge>
           <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">

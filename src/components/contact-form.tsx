@@ -30,74 +30,45 @@ export function ContactForm({ className, ...props }: ContactFormProps) {
       className={cn("space-y-6", className)}
       {...props}
     >
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="grid gap-2">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id={`${formId}-name`}
-            name="name"
-            type="text"
-            defaultValue={formState?.values?.name}
-            placeholder="Your full name"
-            autoComplete="name"
-            aria-describedby={`${formId}-name-message`}
-            aria-invalid={!!formState?.errors?.name}
-            {...constraint.name}
-          />
-          {formState?.errors?.name && (
-            <small
-              id={`${formId}-name-message`}
-              role="alert"
-              className="text-sm"
-            >
-              {formState.errors.name.at(0)}
-            </small>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            id={`${formId}-email`}
-            name="email"
-            type="email"
-            defaultValue={formState?.values?.email}
-            placeholder="your.email@example.com"
-            autoComplete="email"
-            aria-describedby={`${formId}-email-message`}
-            aria-invalid={!!formState?.errors?.email}
-            {...constraint.email}
-          />
-          {formState?.errors?.email && (
-            <small
-              id={`${formId}-email-message`}
-              role="alert"
-              className="text-sm"
-            >
-              {formState.errors.email.at(0)}
-            </small>
-          )}
-        </div>
-      </div>
-
       <div className="grid gap-2">
-        <Label htmlFor="subject">Subject</Label>
+        <Label htmlFor="name">Name</Label>
         <Input
-          id={`${formId}-subject`}
-          name="subject"
+          id={`${formId}-name`}
+          name="name"
           type="text"
-          defaultValue={formState?.values?.subject}
-          placeholder="What's this about?"
-          aria-describedby={`${formId}-subject-message`}
-          aria-invalid={!!formState?.errors?.subject}
-          {...constraint.subject}
+          defaultValue={formState?.values?.name}
+          placeholder="Your full name"
+          autoComplete="name"
+          aria-describedby={`${formId}-name-message`}
+          aria-invalid={!!formState?.errors?.name}
+          {...constraint.name}
         />
-        {formState?.errors?.subject && (
+        {formState?.errors?.name && (
+          <small id={`${formId}-name-message`} role="alert" className="text-sm">
+            {formState.errors.name.at(0)}
+          </small>
+        )}
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="email">Email Address</Label>
+        <Input
+          id={`${formId}-email`}
+          name="email"
+          type="email"
+          defaultValue={formState?.values?.email}
+          placeholder="your.email@example.com"
+          autoComplete="email"
+          aria-describedby={`${formId}-email-message`}
+          aria-invalid={!!formState?.errors?.email}
+          {...constraint.email}
+        />
+        {formState?.errors?.email && (
           <small
-            id={`${formId}-subject-message`}
+            id={`${formId}-email-message`}
             role="alert"
             className="text-sm"
           >
-            {formState.errors.subject.at(0)}
+            {formState.errors.email.at(0)}
           </small>
         )}
       </div>

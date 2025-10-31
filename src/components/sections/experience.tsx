@@ -51,7 +51,7 @@ const ExperienceItem = ({
 export const Experience = () => {
   return (
     <section id="experience" className="relative px-6 py-20">
-      <div className="mx-auto max-w-screen-md">
+      <div className="mx-auto max-w-3xl">
         <div className="text-center">
           <Badge variant="secondary">Experience</Badge>
           <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">

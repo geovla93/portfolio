@@ -18,16 +18,16 @@ export const experiences = [
       "Next.js",
       "Node.js",
       "MongoDB",
+      "Postgres",
       "TypeScript",
       "AWS",
-      "MongoDB",
       "Docker",
     ],
   },
   {
     title: "Software Engineer",
     company: "Cyberscope",
-    period: "October 2022 - May 2025",
+    period: "November 2022 - May 2025",
     description:
       "Designed and implemented core web platform features using Next.js, Node.js, and MongoDB, ensuring high performance and maintainability. Conducted formal smart contract audits—identifying critical Solidity vulnerabilities and advising on remediation in DeFi and NFT projects. Enhanced internal auditing tools, streamlining vulnerability analysis workflows and bolstering overall protocol security.",
     technologies: ["React", "Next.js", "Node.js", "MongoDB", "Solidity"],

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function Contact() {
   return (
-    <section id="contact" className="relative mx-auto max-w-screen-md py-20">
+    <section id="contact" className="relative mx-auto max-w-3xl py-20">
       <div className="text-center">
         <Badge variant="secondary">Get In Touch</Badge>
         <h2 className="mt-4 text-4xl font-bold tracking-tight">
@@ -16,7 +16,7 @@ export function Contact() {
         </p>
       </div>
 
-      <ContactForm className="mx-auto mt-12 max-w-lg" />
+      <ContactForm className="mx-auto mt-12 max-w-xl" />
     </section>
   );
 }

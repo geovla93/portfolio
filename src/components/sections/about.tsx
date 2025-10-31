@@ -10,11 +10,11 @@ import { DownloadButton } from "@/components/download-button";
 export function About() {
   return (
     <section id="about" className="relative px-6 py-20">
-      <div className="mx-auto max-w-screen-md">
+      <div className="mx-auto max-w-3xl">
         <div className="flex flex-col items-center gap-4 md:items-start">
           <Badge variant="secondary">About Me</Badge>
 
-          <div className="grid grid-cols-1 gap-6 text-center md:grid-cols-2 md:text-left">
+          <div className="grid grid-cols-1 gap-6 text-center md:grid-cols-2 md:gap-8 md:text-left">
             <div className="flex flex-col gap-3">
               <h2 className="text-4xl font-bold tracking-tight">
                 Passionate about creating impactful web experiences

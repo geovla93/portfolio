@@ -9,18 +9,18 @@ export type Project = {
 
 export const projects = [
   {
-    title: "VolBoost",
+    title: "Volume Boost",
     description:
-      "VolBoost is a DeFi automation tool that helps token projects boost their trading volume, liquidity, and visibility through automated trading. The system operates through a Telegram bot interface and smart contracts deployed on multiple blockchain networks.",
-    image: "/placeholder.svg",
+      "Volume Boost is a DeFi automation tool that helps token projects boost their trading volume, liquidity, and visibility through automated trading. The system operates through a Telegram bot interface and smart contracts deployed on multiple blockchain networks.",
+    image: "/images/volboost.png",
     technologies: ["Node.js", "TypeScript", "Viem", "Telegraf", "Solidity"],
     liveUrl: "https://t.me/volboost_bot",
   },
   {
-    title: "Minu",
+    title: "Utopia",
     description:
-      "Minu is a comprehensive Web3 DeFi platform built on the Binance Smart Chain (BSC) featuring a cryptocurrency mining game and decentralized exchange.",
-    image: "/placeholder.svg",
+      "Utopia is a comprehensive Web3 DeFi platform built on the Binance Smart Chain (BSC) featuring a cryptocurrency mining game and decentralized exchange.",
+    image: "/images/utopia.png",
     technologies: [
       "React",
       "Next.js",
@@ -28,15 +28,15 @@ export const projects = [
       "Viem",
       "Wagmi",
       "TypeScript",
-      "Motion",
+      "shadcn/ui",
     ],
-    liveUrl: "https://minu.com",
+    liveUrl: "https://utopiabnb.com",
   },
   {
     title: "My Portfolio",
     description:
-      "A personal portfolio website showcasing my projects, experiences, and skills in web development.",
-    image: "/placeholder.svg",
+      "My personal portfolio website showcasing my projects, experience, and skills as a software engineer.",
+    image: "/images/portfolio.png",
     technologies: [
       "React",
       "Next.js",
