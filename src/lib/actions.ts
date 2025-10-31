@@ -35,7 +35,7 @@ async function sendNotificationEmail(
   }
 
   return resend.emails.send({
-    from: `${name} <${email}>`,
+    from: "no-reply <contact@geovla.dev>",
     to: [recipient],
     subject: "Portfolio Contact Request",
     html: `<p><strong>Name:</strong> ${name}</p>
@@ -78,6 +78,17 @@ export async function sendContactRequest(
   ]);
 
   if (followUpResult.error || notificationResult.error) {
+    if (followUpResult.error) {
+      console.error("Failed to send follow-up email:", followUpResult.error);
+    }
+
+    if (notificationResult.error) {
+      console.error(
+        "Failed to send notification email:",
+        notificationResult.error,
+      );
+    }
+
     return {
       success: false,
       values: rawValues,
