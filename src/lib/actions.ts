@@ -18,7 +18,7 @@ export async function sendContactRequest(
 ): Promise<ActionResponse<typeof ContactFormSchema>> {
   const verification = await checkBotId();
   if (verification.isBot) {
-    throw new Error("Bot submission not allowed.");
+    return { success: false, message: "Bot submissions are not allowed." };
   }
 
   const rawValues = Object.fromEntries(formData.entries());
