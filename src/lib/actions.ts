@@ -21,7 +21,7 @@ export async function sendContactRequest(
   if (!parsedValues.success) {
     return {
       success: false,
-      values: rawValues as any,
+      values: rawValues as z.core.input<typeof ContactFormSchema>,
       errors: z.flattenError(parsedValues.error).fieldErrors,
     };
   }
