@@ -5,6 +5,7 @@ import "./globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
@@ -41,6 +42,7 @@ export default function RootLayout({
           {children}
           <Footer className="mt-20" />
         </ThemeProvider>
+        <Toaster richColors />
       </body>
     </html>
   );

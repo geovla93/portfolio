@@ -10,6 +10,7 @@
     "shadcn:migrate": "pnpm dlx shadcn@latest migrate radix"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.548.0",
@@ -19,6 +20,7 @@
     "radix-ui": "latest",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.12"
   },
