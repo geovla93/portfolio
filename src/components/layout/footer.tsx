@@ -3,7 +3,6 @@ import Link from "next/link";
 import { GithubIcon } from "@/components/icons/github";
 import { LinkedInIcon } from "@/components/icons/linkedin";
 import { XIcon } from "@/components/icons/x";
-import { Microprint } from "@/components/security/microprint";
 import { socialLinks } from "@/data/social-links";
 import { cn } from "@/lib/utils";
 
@@ -17,12 +16,10 @@ type FooterProps = React.ComponentProps<"footer">;
 
 export function Footer({ className, ...props }: FooterProps) {
   return (
-    <footer className={cn("bg-card", className)} {...props}>
-      <Microprint />
-      <div className="lattice flex flex-col-reverse items-start justify-between gap-6 py-8 sm:flex-row sm:items-center">
+    <footer className={cn("border-t", className)} {...props}>
+      <div className="mx-auto flex w-full max-w-5xl flex-col-reverse items-start justify-between gap-4 px-4 py-6 sm:flex-row sm:items-center sm:px-6 lg:px-8">
         <p className="text-muted-foreground text-sm">
-          &copy; {new Date().getFullYear()} George Vlassis ·{" "}
-          <span className="font-mono text-xs">geovla.dev</span>
+          &copy; {new Date().getFullYear()} George Vlassis
         </p>
 
         <ul className="text-muted-foreground -ml-2 flex items-center gap-1 sm:ml-0">
