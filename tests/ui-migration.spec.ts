@@ -99,7 +99,9 @@ test("hero and portrait are plain content and the page never scrolls horizontall
   await expect(portrait).toBeVisible();
   await expect
     .poll(() =>
-      portrait.evaluate((element) => (element as HTMLImageElement).naturalWidth),
+      portrait.evaluate(
+        (element) => (element as HTMLImageElement).naturalWidth,
+      ),
     )
     .toBeGreaterThan(0);
 

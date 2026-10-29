@@ -29,8 +29,8 @@ export function Hero() {
         George Vlassis
       </h1>
       <p className="mt-4 max-w-2xl text-xl text-balance sm:text-2xl">
-        I lead engineering and product in blockchain security, and I still
-        write the code.
+        I lead engineering and product in blockchain security, and I still write
+        the code.
       </p>
       <p className="text-muted-foreground mt-4 max-w-2xl leading-relaxed text-pretty">
         Today I run technology and product at Cyberscope. Before that I built

@@ -62,9 +62,9 @@ export function Experience() {
         From smart contract audits to CTO
       </h2>
       <p className="text-muted-foreground mt-3 max-w-2xl leading-relaxed">
-        Since {formatMonth(experiences[experiences.length - 1].start)}{" "}
-        I&apos;ve been at Cyberscope, a blockchain security company. The scope
-        has grown from writing and auditing code to owning the product.
+        Since {formatMonth(experiences[experiences.length - 1].start)} I&apos;ve
+        been at Cyberscope, a blockchain security company. The scope has grown
+        from writing and auditing code to owning the product.
       </p>
 
       <ol className="mt-10 divide-y border-y">
