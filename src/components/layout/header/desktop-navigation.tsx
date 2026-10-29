@@ -28,8 +28,8 @@ export function DesktopNavigation({
       <NavigationMenuList>
         {navLinks.map((link) => (
           <NavigationMenuItem key={link.hash}>
-            <NavigationMenuLink asChild>
-              <Link href={{ hash: link.hash }}>{link.label}</Link>
+            <NavigationMenuLink render={<Link href={{ hash: link.hash }} />}>
+              {link.label}
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}

@@ -1,28 +1,37 @@
 "use client";
 
+import type { VariantProps } from "class-variance-authority";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
 
 type DownloadButtonProps = Omit<
-  React.ComponentProps<typeof Button>,
-  "asChild"
-> & {
-  href: string;
-  filename?: string;
-};
+  React.ComponentProps<typeof Link>,
+  "href" | "download"
+> &
+  VariantProps<typeof buttonVariants> & {
+    href: string;
+    filename?: string;
+  };
 
 export function DownloadButton({
   children,
   filename,
   href,
+  variant,
+  size,
+  className,
   ...props
 }: DownloadButtonProps) {
   return (
-    <Button asChild {...props}>
-      <Link href={href} download={filename ?? true}>
-        {children}
-      </Link>
-    </Button>
+    <Link
+      href={href}
+      download={filename ?? true}
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </Link>
   );
 }

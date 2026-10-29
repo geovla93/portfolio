@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import { GithubIcon } from "@/components/icons/github";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -46,24 +47,32 @@ function ProjectCard({
       </CardContent>
       <CardFooter className="mt-auto gap-3">
         {liveUrl && (
-          <Button variant="default" className="rounded-full" asChild>
-            <Link href={liveUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkIcon className="mr-1 size-4" />
-              Live Demo
-            </Link>
-          </Button>
+          <Link
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "rounded-full",
+            )}
+          >
+            <ExternalLinkIcon className="mr-1 size-4" />
+            Live Demo
+          </Link>
         )}
         {githubUrl && (
-          <Button
-            variant="outline"
-            className="rounded-full shadow-none"
-            asChild
+          <Link
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "rounded-full shadow-none",
+            )}
           >
-            <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="mr-1 size-4" />
-              View Code
-            </Link>
-          </Button>
+            <GithubIcon className="mr-1 size-4" />
+            View Code
+          </Link>
         )}
       </CardFooter>
     </Card>
