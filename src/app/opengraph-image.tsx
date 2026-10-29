@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-import { experiences } from "@/data/experiences";
+import { currentRole } from "@/data/experiences";
 import { site } from "@/data/site";
 
 export const alt =
@@ -45,8 +45,8 @@ export default function OpenGraphImage() {
           fontSize: 26,
         }}
       >
-        <div style={{ display: "flex" }}>{experiences[0].title}</div>
-        <div style={{ display: "flex" }}>{experiences[0].company}</div>
+        <div style={{ display: "flex" }}>{currentRole.title}</div>
+        <div style={{ display: "flex" }}>{currentRole.company}</div>
       </div>
     </div>,
     size,

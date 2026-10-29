@@ -1,4 +1,4 @@
-import { experiences } from "@/data/experiences";
+import { currentRole, experiences } from "@/data/experiences";
 import { projects, type Project } from "@/data/projects";
 import { site } from "@/data/site";
 import { socialLinks } from "@/data/social-links";
@@ -6,7 +6,6 @@ import { socialLinks } from "@/data/social-links";
 const personId = `${site.url}/#person`;
 const websiteId = `${site.url}/#website`;
 const pageId = `${site.url}/#webpage`;
-const currentRole = experiences[0];
 
 const projectEntities = projects.map((project: Project) => ({
   "@type": project.githubUrl ? "SoftwareSourceCode" : "CreativeWork",
@@ -16,7 +15,7 @@ const projectEntities = projects.map((project: Project) => ({
   url: project.live?.url ?? site.url,
   image: new URL(project.image, site.url).href,
   keywords: project.technologies,
-  contributor: { "@id": personId },
+  author: { "@id": personId },
   ...(project.githubUrl ? { codeRepository: project.githubUrl } : {}),
 }));
 
