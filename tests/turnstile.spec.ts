@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { verifyTurnstile } from "../src/lib/turnstile";
 import { mockTurnstile, triggerTurnstile } from "./helpers/turnstile";
@@ -128,10 +128,46 @@ test.describe("Turnstile server verification", () => {
   });
 });
 
+// Server action calls carry a next-action header.
+function recordServerActions(page: Page) {
+  const calls: string[] = [];
+  page.on("request", (request) => {
+    if (request.headers()["next-action"]) calls.push(request.url());
+  });
+  return calls;
+}
+
+async function fillContactForm(page: Page) {
+  await page.getByLabel("Name", { exact: true }).fill("Turnstile Test");
+  await page.getByLabel("Email", { exact: true }).fill("turnstile@example.com");
+  await page
+    .getByLabel("Message", { exact: true })
+    .fill("This request must never send an email.");
+}
+
+test("the Turnstile script waits until the form is near", async ({ page }) => {
+  await mockTurnstile(page, false);
+  const scripts: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().startsWith("https://challenges.cloudflare.com/")) {
+      scripts.push(request.url());
+    }
+  });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  expect(scripts).toEqual([]);
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+  await expect(
+    page.locator('[data-turnstile-action="contact"]'),
+  ).toBeAttached();
+  expect(scripts).toHaveLength(1);
+});
+
 test.describe("Turnstile contact widget", () => {
   test.beforeEach(async ({ page }) => {
     await mockTurnstile(page, false);
     await page.goto("/");
+    await page.locator("#contact").scrollIntoViewIfNeeded();
     await expect(
       page.locator('[data-turnstile-action="contact"]'),
     ).toBeAttached();
@@ -140,13 +176,13 @@ test.describe("Turnstile contact widget", () => {
   test("requires a fresh token and clears expired, timed out and failed challenges", async ({
     page,
   }) => {
-    const submit = page.getByRole("button", { name: "Send Message" });
+    const submit = page.getByRole("button", { name: "Send message" });
     const token = page.locator('input[name="cf-turnstile-response"]');
     await expect(page.locator("[data-turnstile-sitekey]")).toHaveAttribute(
       "data-turnstile-sitekey",
       "0x4AAAAAAFq4H9ljrur0kahN",
     );
-    await expect(submit).toBeDisabled();
+    await expect(submit).toBeEnabled();
 
     for (const event of [
       "expired-callback",
@@ -154,11 +190,10 @@ test.describe("Turnstile contact widget", () => {
       "error-callback",
     ] as const) {
       await triggerTurnstile(page, "callback");
-      await expect(submit).toBeEnabled();
       await expect(token).toHaveValue("mock-turnstile-token");
       await triggerTurnstile(page, event);
-      await expect(submit).toBeDisabled();
       await expect(token).toHaveValue("");
+      await expect(submit).toBeEnabled();
     }
     await expect(
       page.getByText("Verification failed. Please try again."),
@@ -167,36 +202,54 @@ test.describe("Turnstile contact widget", () => {
     await expect(
       page.getByText("Verification failed. Please try again."),
     ).toHaveCount(0);
-    await expect(submit).toBeEnabled();
+  });
+
+  test("submitting before verification explains it inline and sends nothing", async ({
+    page,
+  }) => {
+    const actions = recordServerActions(page);
+    const missing = page.getByText("Complete the verification above");
+    await fillContactForm(page);
+    await page.getByRole("button", { name: "Send message" }).click();
+    await expect(missing).toBeVisible();
+    await expect(missing).toHaveAttribute("role", "alert");
+    expect(actions).toEqual([]);
+
+    // A completed challenge clears the message without another submit.
+    await triggerTurnstile(page, "callback");
+    await expect(missing).toHaveCount(0);
   });
 
   test("the actual server action rejects a bad token, preserves values and resets before retry", async ({
     page,
   }) => {
-    await page.getByLabel("Name", { exact: true }).fill("Turnstile Test");
-    await page
-      .getByLabel("Email Address", { exact: true })
-      .fill("turnstile@example.com");
-    await page
-      .getByLabel("Message", { exact: true })
-      .fill("This request must never send an email.");
+    // The toast must follow the chosen theme, not the light OS preference.
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.evaluate(() => localStorage.setItem("theme", "dark"));
+    await page.reload();
+    await page.locator("#contact").scrollIntoViewIfNeeded();
+    await expect(
+      page.locator('[data-turnstile-action="contact"]'),
+    ).toBeAttached();
+    await fillContactForm(page);
     const invalidToken = "invalid-token-".repeat(200);
     await triggerTurnstile(page, "callback", invalidToken);
     const responsePromise = page.waitForResponse(
       (response) => response.request().headers()["next-action"] !== undefined,
     );
-    await page.getByRole("button", { name: "Send Message" }).click();
+    await page.getByRole("button", { name: "Send message" }).click();
     const response = await responsePromise;
     expect(response.ok()).toBe(true);
     await expect(
       page.getByText("Please complete the verification and try again."),
     ).toBeVisible();
+    await expect(page.locator("[data-sonner-toaster]")).toHaveAttribute(
+      "data-sonner-theme",
+      "dark",
+    );
     await expect(
       page.locator('input[name="cf-turnstile-response"]'),
     ).toHaveValue("");
-    await expect(
-      page.getByRole("button", { name: "Send Message" }),
-    ).toBeDisabled();
     await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
       "Turnstile Test",
     );
@@ -205,8 +258,8 @@ test.describe("Turnstile contact widget", () => {
       .toBe(1);
     await triggerTurnstile(page, "callback", "fresh-retry-token");
     await expect(
-      page.getByRole("button", { name: "Send Message" }),
-    ).toBeEnabled();
+      page.locator('input[name="cf-turnstile-response"]'),
+    ).toHaveValue("fresh-retry-token");
   });
 });
 
@@ -217,13 +270,15 @@ test("a blocked Turnstile script explains recovery and prevents submission", asy
     "https://challenges.cloudflare.com/turnstile/v0/api.js*",
     (route) => route.abort(),
   );
+  const actions = recordServerActions(page);
   await page.goto("/");
-  await expect(
-    page.getByText(
-      "Verification could not load. Refresh the page and try again.",
-    ),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Send Message" }),
-  ).toBeDisabled();
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+  const recovery = page.getByText(
+    "Verification could not load. Refresh the page and try again.",
+  );
+  await expect(recovery).toBeVisible();
+  await fillContactForm(page);
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(recovery).toBeVisible();
+  expect(actions).toEqual([]);
 });

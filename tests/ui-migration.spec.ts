@@ -6,21 +6,8 @@ import {
 } from "@playwright/test";
 
 import { navLinks } from "../src/data/nav-links";
-import { projects } from "../src/data/projects";
+import { projects, type Project } from "../src/data/projects";
 import { mockTurnstile } from "./helpers/turnstile";
-
-// Baseline next-themes warning: RootLayout's <html className="scroll-smooth">
-// is hydrated after next-themes adds light/dark and style.colorScheme.
-function isBaselineThemeWarning(message: string) {
-  return (
-    message.startsWith("A tree hydrated but some attributes") &&
-    message.includes("<RootLayout>") &&
-    /\+\s+className="scroll-smooth"/.test(message) &&
-    /-\s+className="scroll-smooth (light|dark)"/.test(message) &&
-    /-\s+style=\{\{color-scheme:"(light|dark)"\}\}/.test(message) &&
-    !message.includes("data-slot=")
-  );
-}
 
 const test = base.extend<{ guard: void }>({
   guard: [
@@ -30,12 +17,7 @@ const test = base.extend<{ guard: void }>({
       const posts: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       page.on("console", (message) => {
-        if (
-          message.type() === "error" &&
-          !isBaselineThemeWarning(message.text())
-        ) {
-          errors.push(message.text());
-        }
+        if (message.type() === "error") errors.push(message.text());
       });
       await page.route("http://127.0.0.1:3100/**", async (route) => {
         if (
@@ -53,10 +35,9 @@ const test = base.extend<{ guard: void }>({
       expect(posts, "No contact/server-action POST may be attempted").toEqual(
         [],
       );
-      expect(
-        errors,
-        "No browser errors beyond the exact baseline theme warning",
-      ).toEqual([]);
+      expect(errors, "No browser errors, including hydration warnings").toEqual(
+        [],
+      );
     },
     { auto: true },
   ],
@@ -66,6 +47,8 @@ const themeTrigger = (page: Page) =>
   page.getByRole("button", { name: "Toggle theme" });
 const mobileTrigger = (page: Page) =>
   page.getByRole("button", { name: "Toggle navigation", includeHidden: true });
+const navigationPopup = (page: Page) =>
+  page.getByRole("dialog", { name: "Menu" });
 const desktopLinks = (page: Page) =>
   page.locator('[data-slot="navigation-menu"]');
 
@@ -115,8 +98,7 @@ test("hero and portrait are plain content and the page never scrolls horizontall
   }
 });
 
-async function assertPopup(page: Page) {
-  const menu = page.getByRole("menu");
+async function assertPopup(page: Page, menu = page.getByRole("menu")) {
   await expect(menu).toHaveCount(1);
   await expect(menu).toBeVisible();
   await expect
@@ -152,7 +134,9 @@ test("theme pointer choices preserve light, dark, and system behavior", async ({
   for (const choice of ["Dark", "Light", "System"]) {
     await themeTrigger(page).click();
     const menu = await assertPopup(page);
-    await menu.getByRole("menuitem", { name: choice, exact: true }).click();
+    await menu
+      .getByRole("menuitemradio", { name: choice, exact: true })
+      .click();
     await expect(menu).toHaveCount(0);
     await expect(page.locator("html")).toHaveClass(/\blight\b|\bdark\b/);
     await expect
@@ -175,7 +159,7 @@ test("theme keyboard opening, option navigation, selection, Escape and focus", a
     const menu = await assertPopup(page);
     await page.keyboard.press("ArrowDown");
     await expect(
-      menu.getByRole("menuitem", { name: "Dark", exact: true }),
+      menu.getByRole("menuitemradio", { name: "Dark", exact: true }),
     ).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(menu).toHaveCount(0);
@@ -189,7 +173,7 @@ test("theme keyboard opening, option navigation, selection, Escape and focus", a
   }
 });
 
-test("mobile controlled menu follows hashes and closes on selection, Escape and outside click", async ({
+test("mobile navigation follows hashes and closes on selection, Escape and outside click", async ({
   page,
 }) => {
   await visit(page, 390);
@@ -197,19 +181,26 @@ test("mobile controlled menu follows hashes and closes on selection, Escape and 
   await expect(trigger).toHaveAccessibleName("Toggle navigation");
   await trigger.click();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
-  const menu = await assertPopup(page);
-  await expect(menu.getByRole("menuitem")).toHaveCount(4);
+  const menu = await assertPopup(page, navigationPopup(page));
+  const navigation = menu.getByRole("navigation", { name: "Main" });
+  await expect(navigation.getByRole("link")).toHaveCount(4);
   for (const link of navLinks) {
-    await expect(
-      menu.getByRole("menuitem", { name: link.label, exact: true }),
-    ).toHaveAttribute("href", `#${link.hash}`);
+    const anchor = navigation.getByRole("link", {
+      name: link.label,
+      exact: true,
+    });
+    await expect(anchor).toHaveAttribute("href", `#${link.hash}`);
+    // Layout height, unaffected by the popup's zoom-in animation.
+    expect(
+      await anchor.evaluate((element) => (element as HTMLElement).offsetHeight),
+    ).toBe(44);
   }
-  await menu.getByRole("menuitem", { name: "About", exact: true }).click();
+  await navigation.getByRole("link", { name: "About", exact: true }).click();
   await expect(page).toHaveURL(/#about$/);
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await expect(menu).toHaveCount(0);
   await trigger.click();
-  await assertPopup(page);
+  await assertPopup(page, navigationPopup(page));
   await page.keyboard.press("Escape");
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await expect(trigger).toBeFocused();
@@ -269,7 +260,7 @@ test("CTA anchors keep exact destinations and native link semantics", async ({
     null,
   );
   await assertAnchor(
-    page.getByRole("link", { name: "View Github" }),
+    page.getByRole("link", { name: "View GitHub" }),
     "https://github.com/geovla93",
     "_blank",
     null,
@@ -280,20 +271,30 @@ test("CTA anchors keep exact destinations and native link semantics", async ({
     null,
     null,
   );
-  const demos = page.getByRole("link", { name: "Live Demo", exact: true });
-  await expect(demos).toHaveCount(projects.length);
-  for (const [index, project] of projects.entries()) {
+  // Each project links where it can be tried, its source, or both.
+  const codeLinks = page.getByRole("link", { name: "View code", exact: true });
+  const codeUrls: string[] = [];
+  for (const project of projects as readonly Project[]) {
+    expect(project.live ?? project.githubUrl).toBeTruthy();
+    if (project.live) {
+      await assertAnchor(
+        page.getByRole("link", { name: project.live.label, exact: true }),
+        project.live.url,
+        "_blank",
+        "noopener noreferrer",
+      );
+    }
+    if (project.githubUrl) codeUrls.push(project.githubUrl);
+  }
+  await expect(codeLinks).toHaveCount(codeUrls.length);
+  for (const [index, url] of codeUrls.entries()) {
     await assertAnchor(
-      demos.nth(index),
-      project.liveUrl,
+      codeLinks.nth(index),
+      url,
       "_blank",
       "noopener noreferrer",
     );
   }
-  // The current project data contains no code URL; optional CTAs stay absent.
-  await expect(
-    page.getByRole("link", { name: "View Code", exact: true }),
-  ).toHaveCount(0);
   await expect(page.locator("a button, button button, button a")).toHaveCount(
     0,
   );
@@ -317,7 +318,7 @@ test("native labels focus inputs and empty submit stays in browser validation", 
   page,
 }) => {
   await visit(page);
-  for (const name of ["Name", "Email Address", "Message"]) {
+  for (const name of ["Name", "Email", "Message"]) {
     const control = page.getByLabel(name, { exact: true });
     await expect(control).toBeVisible();
     await page
@@ -326,7 +327,7 @@ test("native labels focus inputs and empty submit stays in browser validation", 
       .click();
     await expect(control).toBeFocused();
   }
-  const submit = page.getByRole("button", { name: "Send Message" });
+  const submit = page.getByRole("button", { name: "Send message" });
   expect(await submit.evaluate((element) => element.tagName)).toBe("BUTTON");
   await expect(submit).toHaveAttribute("type", "submit");
   await submit.click();
@@ -341,7 +342,7 @@ test("native labels focus inputs and empty submit stays in browser validation", 
 test("contact constraints survive schema upgrade", async ({ page }) => {
   await visit(page);
   const name = page.getByLabel("Name", { exact: true });
-  const email = page.getByLabel("Email Address", { exact: true });
+  const email = page.getByLabel("Email", { exact: true });
   const message = page.getByLabel("Message", { exact: true });
 
   await expect(name).toHaveAttribute("required", "");
@@ -375,7 +376,7 @@ test("contact form validates on submit, then revalidates a field on blur", async
   page,
 }) => {
   await visit(page);
-  const email = page.getByLabel("Email Address", { exact: true });
+  const email = page.getByLabel("Email", { exact: true });
   const emailError = page.getByText("Invalid email address");
 
   await page.getByLabel("Name", { exact: true }).fill("George");
@@ -392,7 +393,7 @@ test("contact form validates on submit, then revalidates a field on blur", async
 
   await page.getByLabel("Message", { exact: true }).fill("Hello there!");
   // The guard fixture fails the test if this submit reaches the server.
-  await page.getByRole("button", { name: "Send Message" }).click();
+  await page.getByRole("button", { name: "Send message" }).click();
   await expect(emailError).toBeVisible();
   await expect(email).toHaveAttribute("aria-invalid", "true");
   await expect(email).toHaveAccessibleDescription("Invalid email address");
@@ -429,8 +430,10 @@ for (const width of [390, 1280]) {
       await visit(page, width, theme);
       const trigger = themeTrigger(page);
       const box = await trigger.boundingBox();
-      expect(box?.width).toBe(36);
-      expect(box?.height).toBe(36);
+      // 44px touch targets on phones, the compact 36px above md.
+      const size = width < 768 ? 44 : 36;
+      expect(box?.width).toBe(size);
+      expect(box?.height).toBe(size);
       await expect(trigger.locator("button")).toHaveCount(0);
       await page.screenshot({ path: testInfo.outputPath("homepage.png") });
       await trigger.click();
@@ -445,7 +448,7 @@ for (const width of [390, 1280]) {
       await expect(menu).toHaveCount(0);
       if (width === 390) {
         await mobileTrigger(page).click();
-        const navigationMenu = await assertPopup(page);
+        const navigationMenu = await assertPopup(page, navigationPopup(page));
         await navigationMenu.screenshot({
           path: testInfo.outputPath("navigation-menu.png"),
         });
@@ -472,7 +475,7 @@ test("pointer highlight and outside dismissal keep theme menu usable", async ({
   const trigger = themeTrigger(page);
   await trigger.click();
   const menu = await assertPopup(page);
-  const dark = menu.getByRole("menuitem", { name: "Dark", exact: true });
+  const dark = menu.getByRole("menuitemradio", { name: "Dark", exact: true });
   await dark.hover();
   await expect(dark).toHaveAttribute("data-highlighted", "");
   await page.mouse.click(10, 450);
@@ -486,14 +489,14 @@ test("mobile links support keyboard navigation and hash selection", async ({
   await visit(page, 390);
   const trigger = mobileTrigger(page);
   await trigger.focus();
-  await trigger.press("ArrowDown");
-  const menu = await assertPopup(page);
+  await trigger.press("Enter");
+  const menu = await assertPopup(page, navigationPopup(page));
   await expect(
-    menu.getByRole("menuitem", { name: "About", exact: true }),
+    menu.getByRole("link", { name: "About", exact: true }),
   ).toBeFocused();
-  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Tab");
   await expect(
-    menu.getByRole("menuitem", { name: "Experience", exact: true }),
+    menu.getByRole("link", { name: "Experience", exact: true }),
   ).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#experience$/);
@@ -503,9 +506,12 @@ test("mobile links support keyboard navigation and hash selection", async ({
 
 test("both menus retain exit animations until unmount", async ({ page }) => {
   await visit(page, 390);
-  for (const trigger of [themeTrigger(page), mobileTrigger(page)]) {
+  for (const [trigger, popup] of [
+    [themeTrigger(page), page.getByRole("menu")],
+    [mobileTrigger(page), navigationPopup(page)],
+  ]) {
     await trigger.click();
-    const menu = await assertPopup(page);
+    const menu = await assertPopup(page, popup);
     const ending = await menu.evaluateHandle((element) => {
       const result: { animation: { name: string; duration: string } | null } = {
         animation: null,
@@ -532,5 +538,64 @@ test("both menus retain exit animations until unmount", async ({ page }) => {
     expect(animation.duration).not.toBe("0s");
     await expect(menu).toHaveCount(0);
     await expect(trigger).toBeFocused();
+  }
+});
+
+test("the skip link is the first stop and moves focus to the main content", async ({
+  page,
+}) => {
+  await visit(page);
+  const skip = page.getByRole("link", { name: "Skip to content" });
+  await page.keyboard.press("Tab");
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeInViewport();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("main")).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "Get in touch" })).toBeFocused();
+});
+
+test("keyboard focus never lands under the sticky header", async ({ page }) => {
+  await visit(page);
+  const lastProjectLink = page.locator("#projects a").last();
+  await lastProjectLink.focus();
+  const header = await page.locator("header").boundingBox();
+  // Walk backwards through the project links, scrolling up each time.
+  for (let step = 0; step < 4; step++) {
+    await page.keyboard.press("Shift+Tab");
+    await expect
+      .poll(async () => {
+        const focused = await page.evaluate(() => {
+          const { top } = document.activeElement!.getBoundingClientRect();
+          return top;
+        });
+        return focused >= header!.y + header!.height;
+      })
+      .toBe(true);
+  }
+});
+
+test("smooth scrolling yields to the reduced motion preference", async ({
+  page,
+}) => {
+  await visit(page);
+  const scrollBehavior = () =>
+    page.evaluate(
+      () => getComputedStyle(document.documentElement).scrollBehavior,
+    );
+  expect(await scrollBehavior()).toBe("smooth");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect(await scrollBehavior()).toBe("auto");
+});
+
+test("navigation marks the section being read", async ({ page }) => {
+  await visit(page);
+  const current = desktopLinks(page).locator('[aria-current="location"]');
+  await expect(current).toHaveCount(0);
+  for (const link of navLinks) {
+    await page
+      .locator(`#${link.hash}`)
+      .evaluate((section) => section.scrollIntoView({ behavior: "instant" }));
+    await expect(current).toHaveText(link.label);
   }
 });

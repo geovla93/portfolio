@@ -49,10 +49,30 @@ type TurnstileFieldProps = {
 export function TurnstileField({ ref }: TurnstileFieldProps) {
   const field = useFieldContext<string>();
   // Stable across renders, unlike `field`, which changes with its state.
-  const { handleChange } = field;
+  const { handleBlur, handleChange } = field;
   const container = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | null>(null);
   const [error, setError] = useState("");
+  const [isNearby, setIsNearby] = useState(false);
+  // A widget or script failure outranks the schema's "missing token" error.
+  const errors = error ? [{ message: error }] : field.state.meta.errors;
+
+  // The form sits at the bottom of the page, so load Cloudflare's script only
+  // once it is within reach.
+  useEffect(() => {
+    if (!container.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsNearby(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "800px 0px" },
+    );
+    observer.observe(container.current);
+    return () => observer.disconnect();
+  }, []);
 
   const renderWidget = useCallback(() => {
     if (!window.turnstile || !container.current || widgetId.current !== null) {
@@ -66,6 +86,9 @@ export function TurnstileField({ ref }: TurnstileFieldProps) {
       "response-field": false,
       callback: (token) => {
         handleChange(token);
+        // The widget never blurs, so revalidate here to clear a "missing
+        // token" error left by an earlier submission.
+        handleBlur();
         setError("");
       },
       "expired-callback": () => handleChange(""),
@@ -76,7 +99,7 @@ export function TurnstileField({ ref }: TurnstileFieldProps) {
         return true;
       },
     });
-  }, [handleChange]);
+  }, [handleBlur, handleChange]);
 
   useEffect(() => {
     renderWidget();
@@ -103,20 +126,23 @@ export function TurnstileField({ ref }: TurnstileFieldProps) {
   );
 
   return (
-    <Field data-invalid={!!error}>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        onReady={renderWidget}
-        onError={() => {
-          handleChange("");
-          setError(
-            "Verification could not load. Refresh the page and try again.",
-          );
-        }}
-      />
+    <Field data-invalid={errors.length > 0}>
+      {isNearby && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          onReady={renderWidget}
+          onError={() => {
+            handleChange("");
+            setError(
+              "Verification could not load. Refresh the page and try again.",
+            );
+          }}
+        />
+      )}
       <input type="hidden" name={field.name} value={field.state.value} />
-      <div ref={container} />
-      {error && <FieldError>{error}</FieldError>}
+      {/* Reserves the flexible widget's 65px so the form doesn't shift. */}
+      <div ref={container} className="min-h-[65px]" />
+      <FieldError errors={errors.slice(0, 1)} />
       <noscript>Enable JavaScript to verify and send your message.</noscript>
     </Field>
   );

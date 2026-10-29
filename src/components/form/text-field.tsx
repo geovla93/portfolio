@@ -6,6 +6,7 @@ import { useFieldContext } from "@/components/form/form-context";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 type BoundProps =
   | "id"
@@ -47,13 +48,18 @@ type TextFieldProps = Omit<React.ComponentProps<typeof Input>, BoundProps> & {
   label: string;
 };
 
-function TextField({ label, ...props }: TextFieldProps) {
+function TextField({ label, className, ...props }: TextFieldProps) {
   const { controlProps, errorId, errors, invalid } = useTextField();
 
   return (
     <Field data-invalid={invalid}>
       <FieldLabel htmlFor={controlProps.id}>{label}</FieldLabel>
-      <Input {...props} {...controlProps} />
+      {/* 44px tall on touch-sized screens. */}
+      <Input
+        className={cn("h-11 md:h-9", className)}
+        {...props}
+        {...controlProps}
+      />
       <FieldError id={errorId} errors={errors} />
     </Field>
   );

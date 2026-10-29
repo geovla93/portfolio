@@ -25,7 +25,7 @@ function Role({
       <div className="md:col-span-9">
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-muted-foreground">{company}</p>
-        <p className="mt-3 leading-relaxed">{summary}</p>
+        <p className="mt-3 max-w-lg leading-relaxed">{summary}</p>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           {scope.map((group) => (
@@ -53,7 +53,7 @@ export function Experience() {
     <section
       id="experience"
       aria-labelledby="experience-title"
-      className="scroll-mt-16 border-t py-16 sm:py-24"
+      className="border-t py-16 sm:py-24"
     >
       <h2
         id="experience-title"
@@ -61,7 +61,7 @@ export function Experience() {
       >
         From smart contract audits to CTO
       </h2>
-      <p className="text-muted-foreground mt-3 max-w-2xl leading-relaxed">
+      <p className="text-muted-foreground mt-3 max-w-lg leading-relaxed">
         Since {formatMonth(experiences[experiences.length - 1].start)} I&apos;ve
         been at Cyberscope, a blockchain security company. The scope has grown
         from writing and auditing code to owning the product.

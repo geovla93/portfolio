@@ -217,8 +217,11 @@ test("contact form keeps a server field error until that field changes", async (
   expect(token.state.value).toBe("");
   expect(errorsOf(email)).toEqual([EMAIL_DOMAIN_NOT_FOUND]);
 
-  // A fresh Turnstile token and edits to other fields leave it in place.
+  // A fresh Turnstile token (which TurnstileField revalidates with a blur)
+  // and edits to other fields leave it in place.
   token.handleChange("fresh-token");
+  token.handleBlur();
+  expect(errorsOf(email)).toEqual([EMAIL_DOMAIN_NOT_FOUND]);
   name.handleChange("George V");
   name.handleBlur();
   expect(errorsOf(email)).toEqual([EMAIL_DOMAIN_NOT_FOUND]);
@@ -234,4 +237,25 @@ test("contact form keeps a server field error until that field changes", async (
   expect(errorsOf(email)).toEqual([]);
   await form.handleSubmit();
   expect(submissions).toHaveLength(2);
+});
+
+test("contact form reports a missing Turnstile token until a challenge completes", async () => {
+  const { form, name, email, message, token, submissions } =
+    createContactForm();
+
+  name.handleChange("George");
+  email.handleChange("george@example.com");
+  message.handleChange("Hello there!");
+  await form.handleSubmit();
+  expect(submissions).toHaveLength(0);
+  expect(errorsOf(token)).toEqual(["Complete the verification above"]);
+
+  // The widget never blurs, so TurnstileField revalidates on its callback.
+  token.handleChange("token");
+  expect(errorsOf(token)).toEqual(["Complete the verification above"]);
+  token.handleBlur();
+  expect(errorsOf(token)).toEqual([]);
+
+  await form.handleSubmit();
+  expect(submissions).toHaveLength(1);
 });

@@ -4,35 +4,12 @@ import Image from "next/image";
 import { ButtonLink } from "@/components/button-link";
 import { GithubIcon } from "@/components/icons/github";
 
-const capabilities = [
-  {
-    label: "Leadership",
-    value:
-      "Product roadmap, prioritization, and delivery across engineering, auditing, and design teams.",
-  },
-  {
-    label: "Engineering",
-    value:
-      "Full-stack web platforms in Next.js, Node.js, TypeScript, MongoDB, and Postgres.",
-  },
-  {
-    label: "Security",
-    value:
-      "Formal smart contract audits, Solidity vulnerability analysis, and remediation advice.",
-  },
-  {
-    label: "Web3",
-    value: "DeFi products with Solidity contracts, Viem, and Wagmi.",
-  },
-  { label: "Experience", value: "More than five years building software." },
-];
-
 export function About() {
   return (
     <section
       id="about"
       aria-labelledby="about-title"
-      className="scroll-mt-16 border-t py-16 sm:py-24"
+      className="border-t py-16 sm:py-24"
     >
       <div className="grid gap-10 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-4">
@@ -53,7 +30,7 @@ export function About() {
           >
             Engineering and product, under one title
           </h2>
-          <div className="mt-6 space-y-4 leading-relaxed text-pretty">
+          <div className="mt-6 max-w-lg space-y-4 leading-relaxed text-pretty">
             <p>
               At Cyberscope I set the product roadmap for our blockchain
               security SaaS platforms, and coordinate the engineering, auditing,
@@ -68,18 +45,6 @@ export function About() {
             </p>
           </div>
 
-          <dl className="mt-8 divide-y border-y">
-            {capabilities.map(({ label, value }) => (
-              <div
-                key={label}
-                className="grid gap-1 py-3 sm:grid-cols-[8rem_1fr] sm:gap-6"
-              >
-                <dt className="text-muted-foreground text-sm">{label}</dt>
-                <dd className="text-sm leading-relaxed">{value}</dd>
-              </div>
-            ))}
-          </dl>
-
           <ButtonLink
             href="https://github.com/geovla93"
             target="_blank"
@@ -87,7 +52,7 @@ export function About() {
             className="mt-8"
           >
             <GithubIcon aria-hidden="true" className="size-4" />
-            View Github
+            View GitHub
             <ArrowUpRightIcon />
           </ButtonLink>
         </div>

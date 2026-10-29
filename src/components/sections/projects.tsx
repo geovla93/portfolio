@@ -16,7 +16,7 @@ function ProjectItem({
   specs,
   decisions,
   technologies,
-  liveUrl,
+  live,
   githubUrl,
   index,
 }: ProjectType & { index: number }) {
@@ -27,7 +27,7 @@ function ProjectItem({
       aria-labelledby={titleId}
       className="grid gap-6 md:grid-cols-12 md:gap-8"
     >
-      <div className="bg-muted relative aspect-21/10 overflow-hidden rounded-lg border md:col-span-7 md:self-start">
+      <div className="bg-muted relative aspect-21/10 overflow-hidden rounded-lg border md:sticky md:top-20 md:col-span-7 md:self-start">
         <Image
           src={image}
           alt={imageAlt}
@@ -71,15 +71,17 @@ function ProjectItem({
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <ButtonLink
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-describedby={titleId}
-          >
-            Live Demo
-            <ArrowUpRightIcon />
-          </ButtonLink>
+          {live && (
+            <ButtonLink
+              href={live.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-describedby={titleId}
+            >
+              {live.label}
+              <ArrowUpRightIcon />
+            </ButtonLink>
+          )}
           {githubUrl && (
             <ButtonLink
               href={githubUrl}
@@ -89,7 +91,7 @@ function ProjectItem({
               aria-describedby={titleId}
             >
               <GithubIcon aria-hidden="true" className="size-4" />
-              View Code
+              View code
             </ButtonLink>
           )}
         </div>
@@ -103,7 +105,7 @@ export function Projects() {
     <section
       id="projects"
       aria-labelledby="projects-title"
-      className="scroll-mt-16 border-t py-16 sm:py-24"
+      className="border-t py-16 sm:py-24"
     >
       <h2
         id="projects-title"
@@ -111,7 +113,7 @@ export function Projects() {
       >
         Shipped work, and how it&apos;s built
       </h2>
-      <p className="text-muted-foreground mt-3 max-w-2xl leading-relaxed">
+      <p className="text-muted-foreground mt-3 max-w-lg leading-relaxed">
         {countWords[projects.length] ?? projects.length} live products: what
         each one does, how it&apos;s built, and where to try it.
       </p>

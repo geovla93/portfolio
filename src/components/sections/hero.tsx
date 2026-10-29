@@ -32,7 +32,7 @@ export function Hero() {
         I lead engineering and product in blockchain security, and I still write
         the code.
       </p>
-      <p className="text-muted-foreground mt-4 max-w-2xl leading-relaxed text-pretty">
+      <p className="text-muted-foreground mt-4 max-w-lg leading-relaxed text-pretty">
         Today I run technology and product at Cyberscope. Before that I built
         core features of its web platform and ran formal smart contract audits
         for DeFi and NFT projects.
@@ -52,7 +52,7 @@ export function Hero() {
         </DownloadButton>
       </div>
 
-      <dl className="mt-12 grid gap-x-8 gap-y-6 border-t pt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t pt-8 sm:gap-x-8 lg:grid-cols-3">
         {specifications.map(({ label, value }) => (
           <div key={label}>
             <dt className="text-muted-foreground text-sm">{label}</dt>

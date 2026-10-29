@@ -15,5 +15,7 @@ export const ContactFormSchema = z.object({
 // The browser form also carries the Turnstile token, which the server action
 // verifies separately before parsing ContactFormSchema.
 export const ContactFormValuesSchema = ContactFormSchema.extend({
-  "cf-turnstile-response": z.string(),
+  "cf-turnstile-response": z
+    .string()
+    .nonempty("Complete the verification above"),
 });

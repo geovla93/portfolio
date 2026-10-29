@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { SkipLink } from "@/components/skip-link";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
@@ -93,7 +94,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    // next-themes sets the theme class and color-scheme on <html> before
+    // hydration; scroll-pt-16 keeps anchors and focus clear of the header.
+    <html
+      lang="en"
+      className="scroll-pt-16 motion-safe:scroll-smooth"
+      suppressHydrationWarning
+    >
       <body
         className={cn(
           geistSans.variable,
@@ -103,12 +110,13 @@ export default function RootLayout({
       >
         <div className="isolate">
           <ThemeProvider>
+            <SkipLink />
             <Header />
             {children}
             <Footer />
+            <Toaster richColors />
           </ThemeProvider>
         </div>
-        <Toaster richColors />
         <Analytics />
       </body>
     </html>

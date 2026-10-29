@@ -8,7 +8,8 @@ export type Project = {
   specs: { label: string; value: string }[];
   decisions?: string[];
   technologies: string[];
-  liveUrl: string;
+  /** Where to try the product, labeled with what opens. */
+  live?: { label: string; url: string };
   githubUrl?: string;
 };
 
@@ -27,7 +28,7 @@ export const projects = [
       { label: "Runtime", value: "Node.js and TypeScript, with Telegraf" },
     ],
     technologies: ["Node.js", "TypeScript", "Viem", "Telegraf", "Solidity"],
-    liveUrl: "https://t.me/volboost_bot",
+    live: { label: "Open in Telegram", url: "https://t.me/volboost_bot" },
   },
   {
     title: "Utopia",
@@ -51,7 +52,7 @@ export const projects = [
       "TypeScript",
       "shadcn/ui",
     ],
-    liveUrl: "https://utopiabnb.com",
+    live: { label: "Visit site", url: "https://utopiabnb.com" },
   },
   {
     title: "geovla.dev",
@@ -78,6 +79,7 @@ export const projects = [
       "shadcn/ui",
       "Resend",
     ],
-    liveUrl: "https://geovla.dev",
+    // Visitors are already on the live site, so link the source instead.
+    githubUrl: "https://github.com/geovla93/portfolio",
   },
 ] as const satisfies Project[];
