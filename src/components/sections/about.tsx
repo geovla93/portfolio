@@ -1,11 +1,9 @@
 import { DownloadIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
+import { ButtonLink } from "@/components/button-link";
 import { GithubIcon } from "@/components/icons/github";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button-variants";
-import { cn } from "@/lib/utils";
 import { DownloadButton } from "@/components/download-button";
 
 export function About() {
@@ -29,14 +27,14 @@ export function About() {
                 developer community.
               </p>
               <div className="mt-6 flex justify-center gap-4 md:justify-start">
-                <Link
+                <ButtonLink
                   href="https://github.com/geovla93"
                   target="_blank"
-                  className={cn(buttonVariants(), "rounded-full")}
+                  className="rounded-full"
                 >
                   <GithubIcon className="size-5" />
                   View Github
-                </Link>
+                </ButtonLink>
                 <DownloadButton
                   href="/george_vlassis_cv.pdf"
                   variant="outline"

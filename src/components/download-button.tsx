@@ -3,7 +3,7 @@
 import type { VariantProps } from "class-variance-authority";
 import Link from "next/link";
 
-import { buttonVariants } from "@/components/ui/button-variants";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type DownloadButtonProps = Omit<
