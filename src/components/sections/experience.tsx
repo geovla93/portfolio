@@ -1,73 +1,77 @@
-import { Building2Icon, CalendarIcon } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
 import {
   experiences,
+  formatMonth,
   type Experience as ExperienceType,
 } from "@/data/experiences";
 
-const ExperienceItem = ({
+function Role({
   title,
   company,
-  period,
-  description,
+  start,
+  end,
+  summary,
+  scope,
   technologies,
-}: ExperienceType) => {
+}: ExperienceType) {
   return (
-    <div className="relative pl-8 not-last:pb-12">
-      {/* Timeline line */}
-      <div className="bg-muted absolute top-2.5 left-0 h-full w-0.5 group-first:top-6 group-first:h-[calc(100%-24px)]">
-        <div className="border-primary bg-background absolute top-0 -left-[5px] size-3 rounded-full border-2" />
-      </div>
+    <li className="grid gap-4 py-8 md:grid-cols-12 md:gap-8">
+      <p className="text-muted-foreground text-sm tabular-nums md:col-span-3">
+        <time dateTime={start}>{formatMonth(start)}</time>
+        <span aria-hidden="true"> – </span>
+        <span className="sr-only"> to </span>
+        {end ? <time dateTime={end}>{formatMonth(end)}</time> : "Present"}
+      </p>
 
-      {/* Content */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="bg-accent flex size-9 flex-shrink-0 items-center justify-center rounded-full">
-            <Building2Icon className="text-muted-foreground size-5" />
-          </div>
-          <span className="text-lg font-semibold">{company}</span>
-        </div>
-        <div>
-          <h3 className="text-xl font-medium">{title}</h3>
-          <div className="mt-1 flex items-center gap-2 text-sm">
-            <CalendarIcon className="size-4" />
-            <span>{period}</span>
-          </div>
-        </div>
-        <p className="text-muted-foreground">{description}</p>
-        <div className="flex flex-wrap gap-2">
-          {technologies.map((tech) => (
-            <Badge key={tech} variant="secondary" className="rounded-full">
-              {tech}
-            </Badge>
+      <div className="md:col-span-9">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <p className="text-muted-foreground">{company}</p>
+        <p className="mt-3 max-w-lg leading-relaxed">{summary}</p>
+
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          {scope.map((group) => (
+            <div key={group.label}>
+              <h4 className="text-sm font-medium">{group.label}</h4>
+              <ul className="text-muted-foreground mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed">
+                {group.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
+
+        <p className="text-muted-foreground mt-6 font-mono text-xs">
+          {technologies.join(" · ")}
+        </p>
       </div>
-    </div>
+    </li>
   );
-};
+}
 
-export const Experience = () => {
+export function Experience() {
   return (
-    <section id="experience" className="relative px-6 py-20">
-      <div className="mx-auto max-w-3xl">
-        <div className="text-center">
-          <Badge variant="secondary">Experience</Badge>
-          <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            Professional Journey
-          </h2>
-          <p className="text-muted-foreground mt-2 text-lg sm:mt-4">
-            A timeline of my professional growth and key achievements
-          </p>
-        </div>
+    <section
+      id="experience"
+      aria-labelledby="experience-title"
+      className="border-t py-16 sm:py-24"
+    >
+      <h2
+        id="experience-title"
+        className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
+      >
+        From smart contract audits to CTO
+      </h2>
+      <p className="text-muted-foreground mt-3 max-w-lg leading-relaxed">
+        Since {formatMonth(experiences[experiences.length - 1].start)} I&apos;ve
+        been at Cyberscope, a blockchain security company. The scope has grown
+        from writing and auditing code to owning the product.
+      </p>
 
-        <div className="relative mt-12">
-          {experiences.map((experience, index) => (
-            <ExperienceItem key={index} {...experience} />
-          ))}
-        </div>
-      </div>
+      <ol className="mt-10 divide-y border-y">
+        {experiences.map((experience) => (
+          <Role key={experience.start} {...experience} />
+        ))}
+      </ol>
     </section>
   );
-};
+}

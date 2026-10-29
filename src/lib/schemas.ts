@@ -11,3 +11,11 @@ export const ContactFormSchema = z.object({
     .nonempty("Message is required")
     .min(10, "Message must be at least 10 characters long"),
 });
+
+// The browser form also carries the Turnstile token, which the server action
+// verifies separately before parsing ContactFormSchema.
+export const ContactFormValuesSchema = ContactFormSchema.extend({
+  "cf-turnstile-response": z
+    .string()
+    .nonempty("Complete the verification above"),
+});

@@ -1,14 +1,14 @@
 "use server";
 
-import { checkBotId } from "botid/server";
 import { z } from "zod";
 
+import { EMAIL_DOMAIN_NOT_FOUND, emailDomainExists } from "@/lib/email-domain";
 import { ContactFormSchema } from "@/lib/schemas";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { resend } from "./resend";
 
 type ActionResponse<Schema extends z.core.$ZodType> = {
   success: boolean;
-  values?: z.core.input<Schema>;
   errors?: z.core.$ZodFlattenedError<z.core.output<Schema>>["fieldErrors"];
   message?: string;
 };
@@ -44,20 +44,20 @@ async function sendNotificationEmail(
     <p>${message}</p>`,
   });
 }
+
 export async function sendContactRequest(
-  _prevState: ActionResponse<typeof ContactFormSchema> | null,
   formData: FormData,
 ): Promise<ActionResponse<typeof ContactFormSchema>> {
-  const rawValues = Object.fromEntries(formData.entries()) as z.core.input<
-    typeof ContactFormSchema
-  >;
+  const rawValues = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    message: formData.get("message"),
+  } as z.core.input<typeof ContactFormSchema>;
 
-  const verification = await checkBotId();
-  if (verification.isBot) {
+  if (!(await verifyTurnstile(formData.get("cf-turnstile-response")))) {
     return {
       success: false,
-      values: rawValues,
-      message: "Bot submissions are not allowed.",
+      message: "Please complete the verification and try again.",
     };
   }
 
@@ -65,12 +65,18 @@ export async function sendContactRequest(
   if (!parsedValues.success) {
     return {
       success: false,
-      values: rawValues,
       errors: z.flattenError(parsedValues.error).fieldErrors,
     };
   }
 
   const { name, email, message } = parsedValues.data;
+
+  if (!(await emailDomainExists(email))) {
+    return {
+      success: false,
+      errors: { email: [EMAIL_DOMAIN_NOT_FOUND] },
+    };
+  }
 
   const [followUpResult, notificationResult] = await Promise.all([
     sendFollowUpEmail(name, email),
@@ -91,7 +97,6 @@ export async function sendContactRequest(
 
     return {
       success: false,
-      values: rawValues,
       message: "Failed to send email. Please try again later.",
     };
   }

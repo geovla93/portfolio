@@ -1,43 +1,65 @@
-import { CircleArrowDownIcon, ZapIcon } from "lucide-react";
+import { ArrowDownRightIcon, DownloadIcon } from "lucide-react";
 
-import AnimatedGridPattern from "@/components/animated-grid-pattern";
 import { ButtonLink } from "@/components/button-link";
-import { Badge } from "@/components/ui/badge";
+import { DownloadButton } from "@/components/download-button";
+import { experiences, formatMonth } from "@/data/experiences";
+
+const firstRole = experiences[experiences.length - 1];
+
+const specifications = [
+  { label: "Title", value: "Chief Technology Officer & VP, Product" },
+  {
+    label: "Company",
+    // A non-breaking space keeps the month and year together.
+    value: `Cyberscope, since ${formatMonth(firstRole.start).replace(" ", "\u00a0")}`,
+  },
+  { label: "Security", value: "Formal audits of DeFi and NFT contracts" },
+  { label: "Stack", value: "TypeScript, Next.js, Node.js, Solidity" },
+  { label: "Shipped", value: "Volume Boost, Utopia" },
+  { label: "Based in", value: "Ioannina, Greece" },
+];
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-svh items-center justify-center overflow-hidden px-6 pt-6">
-      <AnimatedGridPattern
-        numSquares={30}
-        maxOpacity={0.1}
-        duration={3}
-        className="inset-x-0 h-full skew-y-12 mask-[radial-gradient(500px_circle_at_center,white,transparent)]"
-      />
-      <div className="relative z-1 max-w-3xl text-center">
-        <Badge className="rounded-full border-none">
-          <ZapIcon className="fill-current" />
-          Software Engineer
-        </Badge>
-        <h1 className="mt-6 text-4xl leading-tight font-bold tracking-tight sm:text-5xl md:text-6xl">
-          Building Scalable & Engaging Web Experiences
-        </h1>
-        <p className="mt-6 text-lg md:text-lg">
-          Hey there! I&apos;m a George Vlassis, a Sowftware Engineer who loves
-          building cool and scalable web experiences. From crafting beautiful
-          frontends to powering robust backends, I bring ideas to life with
-          clean code and great design. Let&apos;s create something amazing
-          together! 🚀
-        </p>
-        <div className="mt-12 flex items-center justify-center gap-4">
-          <ButtonLink
-            href="#about"
-            size="lg"
-            className="rounded-full text-base"
-          >
-            See What I Do <CircleArrowDownIcon className="size-5" />
-          </ButtonLink>
-        </div>
+    <section aria-labelledby="hero-name" className="py-16 sm:py-24">
+      <h1
+        id="hero-name"
+        className="text-4xl font-semibold tracking-tight sm:text-5xl"
+      >
+        George Vlassis
+      </h1>
+      <p className="mt-4 max-w-2xl text-xl text-balance sm:text-2xl">
+        I lead engineering and product in blockchain security, and I still write
+        the code.
+      </p>
+      <p className="text-muted-foreground mt-4 max-w-lg leading-relaxed text-pretty">
+        Today I run technology and product at Cyberscope. Before that I built
+        core features of its web platform and ran formal smart contract audits
+        for DeFi and NFT projects.
+      </p>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <ButtonLink href="#contact" size="lg">
+          Get in touch
+          <ArrowDownRightIcon />
+        </ButtonLink>
+        <DownloadButton
+          href="/george_vlassis_cv.pdf"
+          variant="outline"
+          size="lg"
+        >
+          <DownloadIcon />
+          Download CV
+        </DownloadButton>
       </div>
+
+      <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t pt-8 sm:gap-x-8 lg:grid-cols-3">
+        {specifications.map(({ label, value }) => (
+          <div key={label}>
+            <dt className="text-muted-foreground text-sm">{label}</dt>
+            <dd className="mt-1 text-sm leading-snug">{value}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }

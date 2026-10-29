@@ -5,8 +5,9 @@ import "./globals.css";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { SkipLink } from "@/components/skip-link";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
@@ -19,31 +20,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const description =
+  "George Vlassis is Chief Technology Officer & VP, Product at Cyberscope: a hands-on engineering and product leader in blockchain security who builds Next.js and Node.js platforms, Solidity products, and formal smart contract audits.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
   title: {
-    default: "George Vlassis — Software Engineer",
+    default:
+      "George Vlassis — Engineering & Product Leader, Blockchain Security",
     template: "%s | George Vlassis",
   },
-  description:
-    "Portfolio of George Vlassis, VP of Product at Cyberscope. Experienced software engineer specializing in blockchain security, smart contract auditing, and modern web development with Next.js, TypeScript, and Node.js.",
+  description,
   keywords: [
     "George Vlassis",
-    "Software Engineer",
+    "CTO",
+    "Chief Technology Officer",
+    "VP of Product",
+    "Cyberscope",
     "Blockchain Security",
     "Smart Contract Auditor",
+    "Software Engineer",
+    "Solidity",
     "Next.js",
     "TypeScript",
     "Node.js",
-    "Cyberscope",
-    "VP of Product",
     "Web3",
-    "SaaS",
-    "Auditing",
-    "React",
-    "Drizzle ORM",
+    "DeFi",
   ],
-  applicationName: "Portfolio",
+  applicationName: "geovla.dev",
   authors: { name: "George Vlassis", url: "https://geovla.dev" },
   creator: "George Vlassis",
   publisher: "George Vlassis",
@@ -53,11 +57,10 @@ export const metadata: Metadata = {
   category: "technology",
   openGraph: {
     type: "website",
-    title: "George Vlassis — Software Engineer",
-    description:
-      "Explore my portfolio showcasing smart contract audits, SaaS platforms, and full-stack projects built with modern web technologies.",
+    title: "George Vlassis — Engineering & Product Leader, Blockchain Security",
+    description,
     url: "/",
-    siteName: "George Vlassis — Software Engineer",
+    siteName: "George Vlassis",
     images: {
       url: "/og-image.png",
       width: 1200,
@@ -67,9 +70,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "George Vlassis — Software Engineer",
+    title: "George Vlassis — Engineering & Product Leader, Blockchain Security",
     description:
-      "Full-stack engineer & blockchain auditor. Building secure, scalable, and elegant software.",
+      "CTO & VP, Product at Cyberscope. Hands-on engineering leader in blockchain security.",
     creator: "@GeorgeVlassis",
     site: "@GeorgeVlassis",
     images: {
@@ -91,7 +94,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    // next-themes sets the theme class and color-scheme on <html> before
+    // hydration; scroll-pt-16 keeps anchors and focus clear of the header.
+    <html
+      lang="en"
+      className="scroll-pt-16 motion-safe:scroll-smooth"
+      suppressHydrationWarning
+    >
       <body
         className={cn(
           geistSans.variable,
@@ -101,12 +110,13 @@ export default function RootLayout({
       >
         <div className="isolate">
           <ThemeProvider>
+            <SkipLink />
             <Header />
             {children}
-            <Footer className="mt-20" />
+            <Footer />
+            <Toaster />
           </ThemeProvider>
         </div>
-        <Toaster richColors />
         <Analytics />
       </body>
     </html>

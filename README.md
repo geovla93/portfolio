@@ -27,9 +27,38 @@ The contact form and site metadata read these environment variable names:
 - `NEXT_PUBLIC_SITE_URL`
 - `RESEND_API_KEY`
 - `RECIPIENT_EMAIL`
+- `TURNSTILE_SECRET_KEY` (server-only secret for the existing Turnstile widget)
+- `TURNSTILE_HOSTNAMES` (optional comma-separated exact frontend hostnames;
+  defaults to the hostname in `NEXT_PUBLIC_SITE_URL`)
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (optional override; defaults to the existing
+  widget `0x4AAAAAAFq4H9ljrur0kahN`)
 
 Provide appropriate values in your local environment before building or testing.
 Do not commit local environment files.
+
+The contact form uses Cloudflare Turnstile with the `contact` action. Its server
+action calls Siteverify before validating the fields and sending any email, and
+requires a successful response with the exact action and an allowed hostname.
+Tokens are cleared and the widget is reset after every submission attempt.
+
+The form uses TanStack Form. It validates `ContactFormSchema` when the visitor
+submits, then again each time a field loses focus, until a message is sent. The
+server action checks that the email address's domain exists before sending any
+email. The check is an MX lookup that fails only on NXDOMAIN, so a DNS outage
+never blocks a sender.
+
+For production, set `NEXT_PUBLIC_SITE_URL` to the public site URL, or set
+`TURNSTILE_HOSTNAMES` explicitly (for example, `geovla.dev,www.geovla.dev`).
+Production verification rejects allowlists containing `localhost` or loopback IPs.
+The existing widget's Cloudflare hostname configuration must also allow each
+frontend hostname. For development on both local addresses, use
+`TURNSTILE_HOSTNAMES=localhost,127.0.0.1` in your ignored local environment file.
+The existing secret is read in place; integration does not retrieve or rotate it.
+
+Automated browser tests mock the widget, and verification tests mock Siteverify;
+they do not send contact emails. Before deploying, complete a real challenge and
+submit through the contact form, then confirm that replaying the same token is
+rejected. Test keys alone cannot validate the existing widget's configuration.
 
 ## Verification
 
