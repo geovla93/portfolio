@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
 
+import { site } from "@/data/site";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: process.env.NEXT_PUBLIC_SITE_URL!,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 1,
+      url: site.url,
+      // No reliable content modification date is recorded. Omit lastModified
+      // rather than report a new date for unchanged content on every build.
     },
   ];
 }

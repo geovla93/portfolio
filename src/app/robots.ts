@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
 
+import { site } from "@/data/site";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL}/sitemap.xml`,
+    // Previews remain crawlable so crawlers can read their noindex directive.
+    sitemap: `${site.url}/sitemap.xml`,
   };
 }
