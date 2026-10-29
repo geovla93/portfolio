@@ -15,6 +15,36 @@ export type Project = {
 
 export const projects = [
   {
+    title: "uDegen",
+    summary:
+      "An AI-powered crypto analysis platform: ask uAI about any token, run honeypot and holder checks, and scan trending, new, and top-moving tokens across chains.",
+    image: "/images/udegen.png",
+    imageAlt:
+      "uDegen home page: the uAI chat prompt above the Alpha Scanner token search",
+    address: "udegen.io",
+    specs: [
+      { label: "Interface", value: "Web app in Next.js and React" },
+      { label: "Content", value: "Payload CMS" },
+      {
+        label: "Networks",
+        value: "Ethereum, BNB Smart Chain, Solana, TON, Robinhood Chain",
+      },
+      { label: "Hosting", value: "Vercel" },
+    ],
+    technologies: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Payload CMS",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "viem",
+      "Upstash Redis",
+      "Upstash QStash",
+    ],
+    live: { label: "Visit site", url: "https://udegen.io" },
+  },
+  {
     title: "Volume Boost",
     summary:
       "A DeFi automation tool that raises a token's trading volume, liquidity, and visibility through automated trading.",
