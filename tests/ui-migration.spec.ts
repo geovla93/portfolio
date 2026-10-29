@@ -81,41 +81,27 @@ async function visit(page: Page, width = 1280, theme = "light") {
   await expect(themeTrigger(page)).toBeVisible();
 }
 
-test("hero medallion draws finite rosettes and its latent copy tracks the pointer", async ({
+test("hero and portrait are plain content and the page never scrolls horizontally", async ({
   page,
 }) => {
   await visit(page, 1280);
-  const hero = page.locator("section").first();
-  const medallion = hero.locator('svg.engrave[aria-hidden="true"]');
-  await expect(medallion).toHaveCount(1);
-
-  const rotations = await medallion.evaluate((element) =>
-    [...element.querySelectorAll("use")].map((use) => {
-      const match = /rotate\(([^)]+)\)/.exec(
-        use.getAttribute("transform") ?? "",
-      );
-      return match ? Number(match[1]) : Number.NaN;
-    }),
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "George Vlassis",
   );
-  expect(rotations.length).toBeGreaterThan(40);
-  expect(rotations.every(Number.isFinite)).toBe(true);
+  await expect(
+    page.locator("svg.engrave, .microprint, .portrait-engraving"),
+  ).toHaveCount(0);
 
-  const latent = medallion.locator("#medallion-latent");
-  const tilt = () =>
-    latent.evaluate((element) => {
-      const match = /rotate\(([^)]+)\)/.exec(
-        element.getAttribute("transform") ?? "rotate(0)",
-      );
-      return match ? Number(match[1]) : Number.NaN;
-    });
-
-  const bounds = (await hero.boundingBox())!;
-  await page.mouse.move(bounds.x + bounds.width - 4, bounds.y + 200);
-  await expect.poll(tilt).toBeGreaterThan(2);
-  await page.mouse.move(bounds.x + 4, bounds.y + 200);
-  await expect.poll(tilt).toBeLessThan(-2);
-  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + 200);
-  await expect.poll(tilt).toBeCloseTo(0, 1);
+  const portrait = page.getByRole("img", {
+    name: /^Portrait of George Vlassis/,
+  });
+  await portrait.scrollIntoViewIfNeeded();
+  await expect(portrait).toBeVisible();
+  await expect
+    .poll(() =>
+      portrait.evaluate((element) => (element as HTMLImageElement).naturalWidth),
+    )
+    .toBeGreaterThan(0);
 
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
