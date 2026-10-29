@@ -8,6 +8,7 @@ import { projects, type Project as ProjectType } from "@/data/projects";
 const countWords = ["No", "One", "Two", "Three", "Four", "Five", "Six"];
 
 function ProjectItem({
+  id,
   title,
   summary,
   image,
@@ -18,12 +19,12 @@ function ProjectItem({
   technologies,
   live,
   githubUrl,
-  index,
-}: ProjectType & { index: number }) {
-  const titleId = `project-${index}-title`;
+}: ProjectType) {
+  const titleId = `project-${id}-title`;
 
   return (
     <article
+      id={`project-${id}`}
       aria-labelledby={titleId}
       className="grid gap-6 md:grid-cols-12 md:gap-8"
     >
@@ -119,8 +120,8 @@ export function Projects() {
       </p>
 
       <div className="mt-10 space-y-16">
-        {projects.map((project, index) => (
-          <ProjectItem key={project.title} index={index} {...project} />
+        {projects.map((project) => (
+          <ProjectItem key={project.id} {...project} />
         ))}
       </div>
     </section>

@@ -1,4 +1,6 @@
 export type Project = {
+  /** Stable fragment identifier for links and structured data. */
+  id: string;
   title: string;
   summary: string;
   image: string;
@@ -15,6 +17,7 @@ export type Project = {
 
 export const projects = [
   {
+    id: "udegen",
     title: "uDegen",
     summary:
       "An AI-powered crypto analysis platform: ask uAI about any token, run honeypot and holder checks, and scan trending, new, and top-moving tokens across chains.",
@@ -45,6 +48,7 @@ export const projects = [
     live: { label: "Visit site", url: "https://udegen.io" },
   },
   {
+    id: "volume-boost",
     title: "Volume Boost",
     summary:
       "A DeFi automation tool that raises a token's trading volume, liquidity, and visibility through automated trading.",
@@ -61,6 +65,7 @@ export const projects = [
     live: { label: "Open in Telegram", url: "https://t.me/volboost_bot" },
   },
   {
+    id: "utopia",
     title: "Utopia",
     summary:
       "A Web3 DeFi platform with a cryptocurrency mining game and a decentralized exchange.",
@@ -85,6 +90,7 @@ export const projects = [
     live: { label: "Visit site", url: "https://utopiabnb.com" },
   },
   {
+    id: "portfolio",
     title: "geovla.dev",
     summary:
       "This portfolio: a single-page Next.js site whose contact form is verified with Cloudflare Turnstile and delivered through Resend.",

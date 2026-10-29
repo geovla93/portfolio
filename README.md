@@ -1,13 +1,12 @@
 # Portfolio
 
 This is a single-package Next.js App Router portfolio built with React,
-TypeScript, Tailwind CSS, and Playwright.
+TypeScript and Tailwind CSS.
 
 ## Requirements
 
 - Node.js `^22.13.0 || >=24.0.0`
 - pnpm `11.28.4` (pinned in `package.json`)
-- Chromium installed for Playwright browser tests
 - Network access to Google Fonts when running the development server or building,
   because `next/font/google` downloads the Geist font during compilation
 
@@ -22,7 +21,7 @@ pnpm dev
 
 Open <http://localhost:3000>. The home page is at `src/app/page.tsx`.
 
-The contact form and site metadata read these environment variable names:
+The contact form reads these environment variable names:
 
 - `NEXT_PUBLIC_SITE_URL`
 - `RESEND_API_KEY`
@@ -55,8 +54,7 @@ frontend hostname. For development on both local addresses, use
 `TURNSTILE_HOSTNAMES=localhost,127.0.0.1` in your ignored local environment file.
 The existing secret is read in place; integration does not retrieve or rotate it.
 
-Automated browser tests mock the widget, and verification tests mock Siteverify;
-they do not send contact emails. Before deploying, complete a real challenge and
+The SEO checks do not submit the contact form or send emails. Before deploying, complete a real challenge and
 submit through the contact form, then confirm that replaying the same token is
 rejected. Test keys alone cannot validate the existing widget's configuration.
 
@@ -66,10 +64,43 @@ rejected. Test keys alone cannot validate the existing widget's configuration.
 pnpm lint
 pnpm typecheck
 pnpm build
-pnpm exec playwright install chromium
-pnpm test:e2e
 ```
 
-The Playwright configuration starts the app at `http://127.0.0.1:3100` and runs
-the browser tests in Chromium. The build and browser tests require the environment
-variables listed above. Google Fonts must be reachable during compilation.
+Start the production build, then run the HTTP SEO checks in another terminal:
+
+```bash
+pnpm start --hostname 127.0.0.1 --port 3100
+```
+
+```bash
+pnpm test:seo
+```
+
+The checks use Node's built-in test runner and require no browser or additional
+dependencies. Set `SEO_BASE_URL` to check another local server or a deployed site.
+For a preview build, set `SEO_EXPECT_PREVIEW=1`; if Vercel serves its generated
+social image from the preview domain, set `SEO_IMAGE_ORIGIN` to that origin too.
+
+## SEO
+
+`src/data/site.ts` owns the canonical production URL (`https://geovla.dev`) and
+shared identity metadata. `NEXT_PUBLIC_SITE_URL` still configures the contact
+form's hostname fallback; it does not override canonical or sitemap URLs.
+
+The home page owns its canonical and social metadata. Structured data and
+`/llms.txt` reuse the experience, project, and social-profile data. Project `id`
+values are stable public fragments; keep them unchanged when editing titles.
+The 1200×630 `/opengraph-image` is generated at build time from the current
+identity and role data, with no external image or font requests.
+
+Vercel preview builds (`VERCEL_ENV=preview`) send `noindex, follow` in metadata
+and an `X-Robots-Tag` header. They remain crawlable so bots can read that rule.
+Production remains indexable. Other staging hosts need an equivalent deployment
+policy if introduced later.
+
+`/sitemap.xml` lists the single canonical HTML page and omits modification dates
+because the repository does not record reliable content-update dates. `/llms.txt`
+is an experimental supplementary resource, with no promised ranking benefit.
+
+See [the SEO audit and validation notes](docs/seo.md) for the findings, scope,
+maintenance guidance, and deployment checks.
