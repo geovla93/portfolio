@@ -76,7 +76,9 @@ export const experiences = [
 const role = experiences.find((experience) => !("end" in experience));
 
 if (!role) {
-  throw new Error("experiences must include a current role without an end date");
+  throw new Error(
+    "experiences must include a current role without an end date",
+  );
 }
 
 /** The role without an end date. */
