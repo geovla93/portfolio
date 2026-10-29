@@ -41,6 +41,11 @@ action calls Siteverify before running the existing BotID check and email handle
 and requires a successful response with the exact action and an allowed hostname.
 Tokens are cleared and the widget is reset after every submission attempt.
 
+The form uses TanStack Form. While the visitor types, the email field runs a
+debounced server check that the address's domain exists. The check is an MX
+lookup that fails only on NXDOMAIN, so a DNS outage never blocks a sender. The
+server action repeats the check before sending any email.
+
 For production, set `NEXT_PUBLIC_SITE_URL` to the public site URL, or set
 `TURNSTILE_HOSTNAMES` explicitly (for example, `geovla.dev,www.geovla.dev`).
 Production verification rejects allowlists containing `localhost` or loopback IPs.
