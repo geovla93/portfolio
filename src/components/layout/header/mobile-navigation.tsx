@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuLinkItem,
+  DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { NavLink } from "@/data/nav-links";
@@ -27,24 +28,28 @@ export function MobileNavigation({
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen} {...props}>
-      <DropdownMenuTrigger className="order-last md:hidden" asChild>
-        <Button variant="ghost" size="icon">
-          {isOpen ? (
-            <XIcon className="size-6" />
-          ) : (
-            <MenuIcon className="size-6" />
-          )}
-          <span className="sr-only" aria-hidden="true">
-            Toggle navigation
-          </span>
-        </Button>
+      <DropdownMenuTrigger
+        className="order-last md:hidden"
+        aria-label="Toggle navigation"
+        render={<Button variant="ghost" size="icon" />}
+      >
+        {isOpen ? (
+          <XIcon className="size-6" />
+        ) : (
+          <MenuIcon className="size-6" />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {navLinks.map((link) => (
-          <DropdownMenuItem key={link.hash} asChild>
-            <Link href={{ hash: link.hash }}>{link.label}</Link>
-          </DropdownMenuItem>
-        ))}
+        <DropdownMenuGroup>
+          {navLinks.map((link) => (
+            <DropdownMenuLinkItem
+              key={link.hash}
+              render={<Link href={{ hash: link.hash }} />}
+            >
+              {link.label}
+            </DropdownMenuLinkItem>
+          ))}
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

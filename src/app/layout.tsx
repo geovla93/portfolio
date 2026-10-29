@@ -99,11 +99,13 @@ export default function RootLayout({
           "font-sans antialiased",
         )}
       >
-        <ThemeProvider>
-          <Header />
-          {children}
-          <Footer className="mt-20" />
-        </ThemeProvider>
+        <div className="isolate">
+          <ThemeProvider>
+            <Header />
+            {children}
+            <Footer className="mt-20" />
+          </ThemeProvider>
+        </div>
         <Toaster richColors />
         <Analytics />
       </body>

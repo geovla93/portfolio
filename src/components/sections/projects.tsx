@@ -1,10 +1,9 @@
 import { ExternalLinkIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
+import { ButtonLink } from "@/components/button-link";
 import { GithubIcon } from "@/components/icons/github";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -46,24 +45,27 @@ function ProjectCard({
       </CardContent>
       <CardFooter className="mt-auto gap-3">
         {liveUrl && (
-          <Button variant="default" className="rounded-full" asChild>
-            <Link href={liveUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkIcon className="mr-1 size-4" />
-              Live Demo
-            </Link>
-          </Button>
+          <ButtonLink
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full"
+          >
+            <ExternalLinkIcon className="mr-1 size-4" />
+            Live Demo
+          </ButtonLink>
         )}
         {githubUrl && (
-          <Button
+          <ButtonLink
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             variant="outline"
             className="rounded-full shadow-none"
-            asChild
           >
-            <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="mr-1 size-4" />
-              View Code
-            </Link>
-          </Button>
+            <GithubIcon className="mr-1 size-4" />
+            View Code
+          </ButtonLink>
         )}
       </CardFooter>
     </Card>

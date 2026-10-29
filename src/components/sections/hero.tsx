@@ -1,9 +1,8 @@
 import { CircleArrowDownIcon, ZapIcon } from "lucide-react";
-import Link from "next/link";
 
 import AnimatedGridPattern from "@/components/animated-grid-pattern";
+import { ButtonLink } from "@/components/button-link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
@@ -30,11 +29,13 @@ export function Hero() {
           together! 🚀
         </p>
         <div className="mt-12 flex items-center justify-center gap-4">
-          <Button size="lg" className="rounded-full text-base" asChild>
-            <Link href="#about">
-              See What I Do <CircleArrowDownIcon className="size-5" />
-            </Link>
-          </Button>
+          <ButtonLink
+            href="#about"
+            size="lg"
+            className="rounded-full text-base"
+          >
+            See What I Do <CircleArrowDownIcon className="size-5" />
+          </ButtonLink>
         </div>
       </div>
     </section>
