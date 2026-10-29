@@ -79,6 +79,56 @@ async function visit(page: Page, width = 1280, theme = "light") {
   await expect(themeTrigger(page)).toBeVisible();
 }
 
+test("animated grid retains finite positions after viewport resize", async ({
+  page,
+}) => {
+  await visit(page, 1280);
+  const grid = page
+    .locator("section")
+    .first()
+    .locator(':scope > svg[aria-hidden="true"]');
+
+  for (const width of [1280, 390]) {
+    if (width !== 1280) await page.setViewportSize({ width, height: 900 });
+
+    await expect(grid.locator(":scope > svg > rect")).toHaveCount(30);
+    await expect
+      .poll(() =>
+        grid.evaluate((element) => {
+          const inner = element.querySelector(":scope > svg");
+          if (!inner) return false;
+
+          const squares = inner.querySelectorAll(":scope > rect");
+          const layoutWidth = element.clientWidth;
+          const layoutHeight = element.clientHeight;
+
+          return (
+            squares.length === 30 &&
+            layoutWidth > 0 &&
+            layoutHeight > 0 &&
+            [...squares].every((square) => {
+              const xAttribute = square.getAttribute("x");
+              const yAttribute = square.getAttribute("y");
+              if (xAttribute === null || yAttribute === null) return false;
+
+              const x = Number(xAttribute);
+              const y = Number(yAttribute);
+              return (
+                Number.isFinite(x) &&
+                Number.isFinite(y) &&
+                x >= 1 &&
+                x < layoutWidth + 40 &&
+                y >= 1 &&
+                y < layoutHeight + 40
+              );
+            })
+          );
+        }),
+      )
+      .toBe(true);
+  }
+});
+
 async function assertPopup(page: Page) {
   const menu = page.getByRole("menu");
   await expect(menu).toHaveCount(1);
