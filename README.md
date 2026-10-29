@@ -32,7 +32,7 @@ The contact form reads these environment variable names:
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (optional override; defaults to the existing
   widget `0x4AAAAAAFq4H9ljrur0kahN`)
 
-Provide appropriate values in your local environment before building or testing.
+Provide appropriate values in your local environment before building.
 Do not commit local environment files.
 
 The contact form uses Cloudflare Turnstile with the `contact` action. Its server
@@ -54,9 +54,9 @@ frontend hostname. For development on both local addresses, use
 `TURNSTILE_HOSTNAMES=localhost,127.0.0.1` in your ignored local environment file.
 The existing secret is read in place; integration does not retrieve or rotate it.
 
-The SEO checks do not submit the contact form or send emails. Before deploying, complete a real challenge and
-submit through the contact form, then confirm that replaying the same token is
-rejected. Test keys alone cannot validate the existing widget's configuration.
+Before deploying, complete a real challenge and submit through the contact form,
+then confirm that replaying the same token is rejected. Test keys alone cannot
+validate the existing widget's configuration.
 
 ## Verification
 
@@ -65,21 +65,6 @@ pnpm lint
 pnpm typecheck
 pnpm build
 ```
-
-Start the production build, then run the HTTP SEO checks in another terminal:
-
-```bash
-pnpm start --hostname 127.0.0.1 --port 3100
-```
-
-```bash
-pnpm test:seo
-```
-
-The checks use Node's built-in test runner and require no browser or additional
-dependencies. Set `SEO_BASE_URL` to check another local server or a deployed site.
-For a preview build, set `SEO_EXPECT_PREVIEW=1`; if Vercel serves its generated
-social image from the preview domain, set `SEO_IMAGE_ORIGIN` to that origin too.
 
 ## SEO
 
@@ -101,6 +86,3 @@ policy if introduced later.
 `/sitemap.xml` lists the single canonical HTML page and omits modification dates
 because the repository does not record reliable content-update dates. `/llms.txt`
 is an experimental supplementary resource, with no promised ranking benefit.
-
-See [the SEO audit and validation notes](docs/seo.md) for the findings, scope,
-maintenance guidance, and deployment checks.
