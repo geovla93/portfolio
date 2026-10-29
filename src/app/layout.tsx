@@ -7,7 +7,7 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { SkipLink } from "@/components/skip-link";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
@@ -114,7 +114,7 @@ export default function RootLayout({
             <Header />
             {children}
             <Footer />
-            <Toaster richColors />
+            <Toaster />
           </ThemeProvider>
         </div>
         <Analytics />

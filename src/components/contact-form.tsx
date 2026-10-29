@@ -3,11 +3,11 @@
 import { revalidateLogic } from "@tanstack/react-form";
 import { SendIcon } from "lucide-react";
 import { useRef } from "react";
-import { toast } from "sonner";
 
 import { useAppForm } from "@/components/form";
 import type { TurnstileFieldHandle } from "@/components/form/turnstile-field";
 import { Field, FieldGroup } from "@/components/ui/field";
+import { toast } from "@/components/ui/toast";
 import { sendContactRequest } from "@/lib/actions";
 import { getZodConstraint } from "@/lib/constraint";
 import { ContactFormSchema, ContactFormValuesSchema } from "@/lib/schemas";
@@ -72,7 +72,9 @@ export function ContactForm(props: ContactFormProps) {
       }
 
       if (response.success) {
-        toast.success("Your message has been sent successfully!", {
+        toast.add({
+          type: "success",
+          title: "Your message has been sent successfully!",
           description: "I'll get back to you as soon as possible.",
         });
         formApi.reset();
@@ -91,8 +93,11 @@ export function ContactForm(props: ContactFormProps) {
       focusFirstInvalidField(formApi.state.fieldMeta);
 
       if (response.message) {
-        toast.error("There was an error with your submission.", {
+        toast.add({
+          type: "error",
+          title: "There was an error with your submission.",
           description: response.message,
+          priority: "high",
         });
       }
     },
