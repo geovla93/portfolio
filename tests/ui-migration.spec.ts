@@ -7,6 +7,7 @@ import {
 
 import { navLinks } from "../src/data/nav-links";
 import { projects } from "../src/data/projects";
+import { mockTurnstile } from "./helpers/turnstile";
 
 // Baseline next-themes warning: RootLayout's <html className="scroll-smooth">
 // is hydrated after next-themes adds light/dark and style.colorScheme.
@@ -24,6 +25,7 @@ function isBaselineThemeWarning(message: string) {
 const test = base.extend<{ guard: void }>({
   guard: [
     async ({ page }, use) => {
+      await mockTurnstile(page);
       const errors: string[] = [];
       const posts: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));

@@ -4,6 +4,7 @@ import { checkBotId } from "botid/server";
 import { z } from "zod";
 
 import { ContactFormSchema } from "@/lib/schemas";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { resend } from "./resend";
 
 type ActionResponse<Schema extends z.core.$ZodType> = {
@@ -48,9 +49,19 @@ export async function sendContactRequest(
   _prevState: ActionResponse<typeof ContactFormSchema> | null,
   formData: FormData,
 ): Promise<ActionResponse<typeof ContactFormSchema>> {
-  const rawValues = Object.fromEntries(formData.entries()) as z.core.input<
-    typeof ContactFormSchema
-  >;
+  const rawValues = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    message: formData.get("message"),
+  } as z.core.input<typeof ContactFormSchema>;
+
+  if (!(await verifyTurnstile(formData.get("cf-turnstile-response")))) {
+    return {
+      success: false,
+      values: rawValues,
+      message: "Please complete the verification and try again.",
+    };
+  }
 
   const verification = await checkBotId();
   if (verification.isBot) {

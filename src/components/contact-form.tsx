@@ -1,7 +1,15 @@
 "use client";
 
 import { SendIcon } from "lucide-react";
-import { useActionState, useEffect, useId } from "react";
+import Script from "next/script";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -17,17 +25,94 @@ import { Textarea } from "@/components/ui/textarea";
 import { sendContactRequest } from "@/lib/actions";
 import { getZodConstraint } from "@/lib/constraint";
 import { ContactFormSchema } from "@/lib/schemas";
+import { TURNSTILE_ACTION, TURNSTILE_SITE_KEY } from "@/lib/turnstile-config";
 
 const constraint = getZodConstraint(ContactFormSchema);
 
 type ContactFormProps = React.ComponentProps<"form">;
 
+type Turnstile = {
+  render: (
+    container: HTMLElement,
+    options: {
+      sitekey: string;
+      action: string;
+      size: "flexible";
+      "response-field": false;
+      callback: (token: string) => void;
+      "expired-callback": () => void;
+      "timeout-callback": () => void;
+      "error-callback": () => boolean;
+    },
+  ) => string;
+  reset: (widgetId: string) => void;
+  remove: (widgetId: string) => void;
+};
+
+declare global {
+  interface Window {
+    turnstile?: Turnstile;
+  }
+}
+
 export function ContactForm(props: ContactFormProps) {
   const formId = useId();
+  const turnstileContainer = useRef<HTMLDivElement>(null);
+  const widgetId = useRef<string | null>(null);
+  const [token, setToken] = useState("");
+  const [verificationError, setVerificationError] = useState("");
   const [formState, formAction, isPending] = useActionState(
-    sendContactRequest,
+    async (...args: Parameters<typeof sendContactRequest>) => {
+      try {
+        return await sendContactRequest(...args);
+      } finally {
+        setToken("");
+        if (widgetId.current !== null) {
+          window.turnstile?.reset(widgetId.current);
+        }
+      }
+    },
     null,
   );
+
+  const renderTurnstile = useCallback(() => {
+    if (
+      !window.turnstile ||
+      !turnstileContainer.current ||
+      widgetId.current !== null
+    ) {
+      return;
+    }
+
+    widgetId.current = window.turnstile.render(turnstileContainer.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      action: TURNSTILE_ACTION,
+      size: "flexible",
+      "response-field": false,
+      callback: (response) => {
+        setToken(response);
+        setVerificationError("");
+      },
+      "expired-callback": () => setToken(""),
+      "timeout-callback": () => setToken(""),
+      "error-callback": () => {
+        setToken("");
+        setVerificationError("Verification failed. Please try again.");
+        return true;
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    renderTurnstile();
+
+    return () => {
+      if (widgetId.current !== null) {
+        window.turnstile?.remove(widgetId.current);
+        widgetId.current = null;
+      }
+    };
+  }, [renderTurnstile]);
 
   useEffect(() => {
     if (!formState) return;
@@ -47,6 +132,17 @@ export function ContactForm(props: ContactFormProps) {
 
   return (
     <form id={formId} action={formAction} {...props}>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        onReady={renderTurnstile}
+        onError={() => {
+          setToken("");
+          setVerificationError(
+            "Verification could not load. Refresh the page and try again.",
+          );
+        }}
+      />
+      <input type="hidden" name="cf-turnstile-response" value={token} />
       <FieldGroup>
         <Field data-invalid={!!formState?.errors?.name}>
           <FieldLabel htmlFor={`${formId}-name`}>Name</FieldLabel>
@@ -104,12 +200,19 @@ export function ContactForm(props: ContactFormProps) {
             </FieldError>
           )}
         </Field>
+        <Field data-invalid={!!verificationError}>
+          <div ref={turnstileContainer} />
+          {verificationError && <FieldError>{verificationError}</FieldError>}
+          <noscript>
+            Enable JavaScript to verify and send your message.
+          </noscript>
+        </Field>
         <Field>
           <Button
             type="submit"
             size="lg"
-            disabled={isPending}
-            aria-disabled={isPending}
+            disabled={isPending || !token}
+            aria-disabled={isPending || !token}
           >
             {isPending ? (
               <>
