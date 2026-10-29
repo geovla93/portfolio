@@ -1,6 +1,15 @@
 // Source: https://github.com/edmundhung/conform/blob/main/packages/conform-zod/v4/constraint.ts
 
-import type { $ZodType, $ZodTypes, $ZodNumber, $ZodString } from "zod/v4/core";
+import { util as zodUtil } from "zod/v4/core";
+import type {
+  $ZodNumber,
+  $ZodNumberFormat,
+  $ZodNumberFormats,
+  $ZodString,
+  $ZodType,
+  $ZodTypes,
+  $ZodChecks,
+} from "zod/v4/core";
 
 export type Constraint = {
   required?: boolean;
@@ -106,11 +115,33 @@ export function getZodConstraint<TSchema extends $ZodType>(
       updateConstraint(def.element, data, `${name}[]`);
     } else if (def.type === "string") {
       const _schema = schema as $ZodString;
-      if (_schema._zod.bag.minimum !== null) {
-        constraint.minLength = _schema._zod.bag.minimum ?? undefined;
+      let minLength = _schema._zod.bag.minimum ?? undefined;
+      let maxLength = _schema._zod.bag.maximum ?? undefined;
+
+      for (const check of _schema._zod.def.checks ?? []) {
+        const checkDef = (check as $ZodChecks)._zod.def;
+
+        if (checkDef.check === "min_length" && checkDef.minimum !== undefined) {
+          minLength = Math.max(minLength ?? -Infinity, checkDef.minimum);
+        } else if (
+          checkDef.check === "max_length" &&
+          checkDef.maximum !== undefined
+        ) {
+          maxLength = Math.min(maxLength ?? Infinity, checkDef.maximum);
+        } else if (
+          checkDef.check === "length_equals" &&
+          checkDef.length !== undefined
+        ) {
+          minLength = Math.max(minLength ?? -Infinity, checkDef.length);
+          maxLength = Math.min(maxLength ?? Infinity, checkDef.length);
+        }
       }
-      if (_schema._zod.bag.maximum !== null) {
-        constraint.maxLength = _schema._zod.bag.maximum;
+
+      if (minLength !== undefined) {
+        constraint.minLength = minLength;
+      }
+      if (maxLength !== undefined) {
+        constraint.maxLength = maxLength;
       }
     } else if (def.type === "optional") {
       constraint.required = false;
@@ -120,11 +151,51 @@ export function getZodConstraint<TSchema extends $ZodType>(
       updateConstraint(def.innerType, data, name);
     } else if (def.type === "number") {
       const _schema = schema as $ZodNumber;
-      if (_schema._zod.bag.minimum !== null) {
-        constraint.min = _schema._zod.bag.minimum;
+      let min = _schema._zod.bag.minimum ?? undefined;
+      let max = _schema._zod.bag.maximum ?? undefined;
+
+      const addMinimum = (value: number) => {
+        min = Math.max(min ?? -Infinity, value);
+      };
+      const addMaximum = (value: number) => {
+        max = Math.min(max ?? Infinity, value);
+      };
+      const addFormatRange = (format: $ZodNumberFormats) => {
+        const [minimum, maximum] = zodUtil.NUMBER_FORMAT_RANGES[format];
+        addMinimum(minimum);
+        addMaximum(maximum);
+      };
+
+      const numberFormat = (schema as $ZodNumberFormat)._zod.def;
+      if (numberFormat.check === "number_format") {
+        addFormatRange(numberFormat.format);
       }
-      if (_schema._zod.bag.maximum !== null) {
-        constraint.max = _schema._zod.bag.maximum;
+
+      for (const check of _schema._zod.def.checks ?? []) {
+        const checkDef = (check as $ZodChecks)._zod.def;
+
+        if (
+          checkDef.check === "greater_than" &&
+          checkDef.inclusive &&
+          typeof checkDef.value === "number"
+        ) {
+          addMinimum(checkDef.value);
+        } else if (
+          checkDef.check === "less_than" &&
+          checkDef.inclusive &&
+          typeof checkDef.value === "number"
+        ) {
+          addMaximum(checkDef.value);
+        } else if (checkDef.check === "number_format") {
+          addFormatRange(checkDef.format);
+        }
+      }
+
+      if (min !== undefined) {
+        constraint.min = min;
+      }
+      if (max !== undefined) {
+        constraint.max = max;
       }
     } else if (def.type === "enum") {
       constraint.pattern = Object.keys(def.entries)

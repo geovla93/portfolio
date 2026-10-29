@@ -352,6 +352,53 @@ test("native labels focus inputs and empty submit stays in browser validation", 
   ).toBe(false);
 });
 
+test("contact constraints survive schema upgrade", async ({ page }) => {
+  await visit(page);
+  const name = page.getByLabel("Name", { exact: true });
+  const email = page.getByLabel("Email Address", { exact: true });
+  const message = page.getByLabel("Message", { exact: true });
+
+  await expect(name).toHaveAttribute("required", "");
+  await expect(name).toHaveAttribute("minlength", "2");
+  await expect(email).toHaveAttribute("required", "");
+  await expect(email).toHaveAttribute("type", "email");
+  await expect(message).toHaveAttribute("required", "");
+  await expect(message).toHaveAttribute("minlength", "10");
+
+  await name.fill("A");
+  await email.fill("invalid-email");
+  await message.fill("123456789");
+  expect(
+    await name.evaluate(
+      (element) => (element as HTMLInputElement).validity.tooShort,
+    ),
+  ).toBe(true);
+  expect(
+    await email.evaluate(
+      (element) => (element as HTMLInputElement).validity.typeMismatch,
+    ),
+  ).toBe(true);
+  expect(
+    await message.evaluate(
+      (element) => (element as HTMLTextAreaElement).validity.tooShort,
+    ),
+  ).toBe(true);
+});
+
+test("icon controls retain accessible names", async ({ page }) => {
+  for (const width of [1280, 390]) {
+    await visit(page, width);
+    const theme = themeTrigger(page);
+    const mobile = mobileTrigger(page);
+
+    await expect(theme).toHaveAccessibleName("Toggle theme");
+    await expect(mobile).toHaveAttribute("aria-label", "Toggle navigation");
+    if (width === 390) {
+      await expect(mobile).toHaveAccessibleName("Toggle navigation");
+    }
+  }
+});
+
 for (const width of [390, 1280]) {
   for (const theme of ["light", "dark"]) {
     test(`menu geometry, styling and evidence at ${width}px in ${theme}`, async ({
