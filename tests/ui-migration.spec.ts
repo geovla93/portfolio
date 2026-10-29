@@ -387,36 +387,40 @@ test("contact constraints survive schema upgrade", async ({ page }) => {
   ).toBe(true);
 });
 
-test("contact fields show schema errors after blur and clear them while typing", async ({
+test("contact form validates on submit, then revalidates a field on blur", async ({
   page,
 }) => {
   await visit(page);
-  const name = page.getByLabel("Name", { exact: true });
   const email = page.getByLabel("Email Address", { exact: true });
-  const nameError = page.getByText("Name must be at least 2 characters long");
+  const emailError = page.getByText("Invalid email address");
 
-  await name.fill("J");
-  await expect(nameError).toHaveCount(0);
-  await expect(name).toHaveAttribute("aria-invalid", "false");
-  await name.blur();
-  await expect(nameError).toBeVisible();
-  await expect(name).toHaveAttribute("aria-invalid", "true");
-  await expect(name).toHaveAccessibleDescription(
-    "Name must be at least 2 characters long",
-  );
-  await name.fill("Jo");
-  await expect(nameError).toHaveCount(0);
-  await expect(name).not.toHaveAttribute("aria-describedby");
-
+  await page.getByLabel("Name", { exact: true }).fill("George");
   // Passes the native type="email" check, so only the schema rejects it.
   await email.fill("george@localhost");
   await email.blur();
-  await expect(page.getByText("Invalid email address")).toBeVisible();
+  await expect(emailError).toHaveCount(0);
+  await expect(email).toHaveAttribute("aria-invalid", "false");
   expect(
     await email.evaluate(
       (element) => (element as HTMLInputElement).validity.valid,
     ),
   ).toBe(true);
+
+  await page.getByLabel("Message", { exact: true }).fill("Hello there!");
+  // The guard fixture fails the test if this submit reaches the server.
+  await page.getByRole("button", { name: "Send Message" }).click();
+  await expect(emailError).toBeVisible();
+  await expect(email).toHaveAttribute("aria-invalid", "true");
+  await expect(email).toHaveAccessibleDescription("Invalid email address");
+
+  // After a submission, typing alone keeps the error; leaving the field
+  // revalidates it.
+  await email.fill("george@example.com");
+  await expect(emailError).toBeVisible();
+  await email.blur();
+  await expect(emailError).toHaveCount(0);
+  await expect(email).toHaveAttribute("aria-invalid", "false");
+  await expect(email).not.toHaveAttribute("aria-describedby");
 });
 
 test("icon controls retain accessible names", async ({ page }) => {

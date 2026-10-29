@@ -182,11 +182,8 @@ test.describe("Turnstile contact widget", () => {
       .fill("This request must never send an email.");
     const invalidToken = "invalid-token-".repeat(200);
     await triggerTurnstile(page, "callback", invalidToken);
-    // The email domain check is also a server action; wait for the submission.
     const responsePromise = page.waitForResponse(
-      (response) =>
-        response.request().headers()["next-action"] !== undefined &&
-        !!response.request().postData()?.includes("cf-turnstile-response"),
+      (response) => response.request().headers()["next-action"] !== undefined,
     );
     await page.getByRole("button", { name: "Send Message" }).click();
     const response = await responsePromise;

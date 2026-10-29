@@ -1,14 +1,11 @@
 "use client";
 
-import { useSelector } from "@tanstack/react-form";
 import { useId } from "react";
 
 import { useFieldContext } from "@/components/form/form-context";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 
 type BoundProps =
   | "id"
@@ -23,21 +20,15 @@ function useTextField() {
   const field = useFieldContext<string>();
   const id = useId();
   const errorId = `${id}-error`;
-  const submitted = useSelector(
-    field.form.store,
-    (state) => state.submissionAttempts > 0,
-  );
-  const { errors, isBlurred, isValidating } = field.state.meta;
-  // Errors wait until the user leaves the field or submits, then follow every
-  // keystroke so a fix clears them immediately. One message at a time.
-  const visibleErrors = isBlurred || submitted ? errors.slice(0, 1) : [];
-  const invalid = visibleErrors.length > 0;
+  // The form only validates from its first submission on, so every error is
+  // ready to show. One message at a time.
+  const errors = field.state.meta.errors.slice(0, 1);
+  const invalid = errors.length > 0;
 
   return {
     errorId,
-    errors: visibleErrors,
+    errors,
     invalid,
-    isValidating,
     controlProps: {
       id,
       name: field.name,
@@ -56,26 +47,13 @@ type TextFieldProps = Omit<React.ComponentProps<typeof Input>, BoundProps> & {
   label: string;
 };
 
-function TextField({ label, className, ...props }: TextFieldProps) {
-  const { controlProps, errorId, errors, invalid, isValidating } =
-    useTextField();
+function TextField({ label, ...props }: TextFieldProps) {
+  const { controlProps, errorId, errors, invalid } = useTextField();
 
   return (
     <Field data-invalid={invalid}>
       <FieldLabel htmlFor={controlProps.id}>{label}</FieldLabel>
-      <div className="relative">
-        <Input
-          {...props}
-          {...controlProps}
-          className={cn(isValidating && "pr-9", className)}
-        />
-        {isValidating && (
-          <Spinner
-            aria-hidden
-            className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2"
-          />
-        )}
-      </div>
+      <Input {...props} {...controlProps} />
       <FieldError id={errorId} errors={errors} />
     </Field>
   );

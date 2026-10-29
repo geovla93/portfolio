@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateLogic } from "@tanstack/react-form";
 import { SendIcon } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
@@ -7,9 +8,9 @@ import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import type { TurnstileFieldHandle } from "@/components/form/turnstile-field";
 import { Field, FieldGroup } from "@/components/ui/field";
-import { checkEmailDomain, sendContactRequest } from "@/lib/actions";
+import { sendContactRequest } from "@/lib/actions";
 import { getZodConstraint } from "@/lib/constraint";
-import { ContactFormSchema } from "@/lib/schemas";
+import { ContactFormSchema, ContactFormValuesSchema } from "@/lib/schemas";
 
 const constraint = getZodConstraint(ContactFormSchema);
 
@@ -26,9 +27,13 @@ export function ContactForm(props: ContactFormProps) {
   const turnstile = useRef<TurnstileFieldHandle>(null);
   const form = useAppForm({
     defaultValues,
-    // Always validate on submit. Otherwise a submit during the email check's
-    // debounce is silently dropped because the form is still validating.
-    canSubmitWhenInvalid: true,
+    // Validate the whole schema on submit, then again whenever a field loses
+    // focus until the next successful submission.
+    validationLogic: revalidateLogic({
+      mode: "submit",
+      modeAfterSubmission: "blur",
+    }),
+    validators: { onDynamic: ContactFormValuesSchema },
     onSubmit: async ({ value, formApi }) => {
       const formData = new FormData();
       for (const [name, entry] of Object.entries(value)) {
@@ -56,11 +61,13 @@ export function ContactForm(props: ContactFormProps) {
         return;
       }
 
-      // Server errors clear as soon as the field is edited or revalidated.
+      // Stored as submit errors, which TanStack clears when that field is
+      // next edited or blurred. Other fields, including the Turnstile token
+      // refreshing after the reset above, leave them in place.
       for (const [name, messages] of Object.entries(response.errors ?? {})) {
         formApi.setFieldMeta(name as keyof typeof value, (meta) => ({
           ...meta,
-          errorMap: { ...meta.errorMap, onServer: { message: messages?.[0] } },
+          errorMap: { ...meta.errorMap, onSubmit: { message: messages?.[0] } },
         }));
       }
 
@@ -82,10 +89,7 @@ export function ContactForm(props: ContactFormProps) {
     >
       <form.AppForm>
         <FieldGroup>
-          <form.AppField
-            name="name"
-            validators={{ onChange: ContactFormSchema.shape.name }}
-          >
+          <form.AppField name="name">
             {(field) => (
               <field.TextField
                 label="Name"
@@ -95,14 +99,7 @@ export function ContactForm(props: ContactFormProps) {
               />
             )}
           </form.AppField>
-          <form.AppField
-            name="email"
-            validators={{
-              onChange: ContactFormSchema.shape.email,
-              onChangeAsync: ({ value }) => checkEmailDomain(value),
-              onChangeAsyncDebounceMs: 500,
-            }}
-          >
+          <form.AppField name="email">
             {(field) => (
               <field.TextField
                 label="Email Address"
@@ -113,10 +110,7 @@ export function ContactForm(props: ContactFormProps) {
               />
             )}
           </form.AppField>
-          <form.AppField
-            name="message"
-            validators={{ onChange: ContactFormSchema.shape.message }}
-          >
+          <form.AppField name="message">
             {(field) => (
               <field.TextareaField
                 label="Message"

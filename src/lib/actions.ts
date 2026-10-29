@@ -45,21 +45,6 @@ async function sendNotificationEmail(
   });
 }
 
-export async function checkEmailDomain(
-  email: string,
-): Promise<{ message: string } | undefined> {
-  const parsedEmail = z.safeParse(ContactFormSchema.shape.email, email);
-  if (!parsedEmail.success) {
-    return { message: parsedEmail.error.issues[0].message };
-  }
-
-  if (!(await emailDomainExists(parsedEmail.data))) {
-    return { message: EMAIL_DOMAIN_NOT_FOUND };
-  }
-
-  return undefined;
-}
-
 export async function sendContactRequest(
   formData: FormData,
 ): Promise<ActionResponse<typeof ContactFormSchema>> {

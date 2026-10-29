@@ -41,10 +41,11 @@ action calls Siteverify before validating the fields and sending any email, and
 requires a successful response with the exact action and an allowed hostname.
 Tokens are cleared and the widget is reset after every submission attempt.
 
-The form uses TanStack Form. While the visitor types, the email field runs a
-debounced server check that the address's domain exists. The check is an MX
-lookup that fails only on NXDOMAIN, so a DNS outage never blocks a sender. The
-server action repeats the check before sending any email.
+The form uses TanStack Form. It validates `ContactFormSchema` when the visitor
+submits, then again each time a field loses focus, until a message is sent. The
+server action checks that the email address's domain exists before sending any
+email. The check is an MX lookup that fails only on NXDOMAIN, so a DNS outage
+never blocks a sender.
 
 For production, set `NEXT_PUBLIC_SITE_URL` to the public site URL, or set
 `TURNSTILE_HOSTNAMES` explicitly (for example, `geovla.dev,www.geovla.dev`).
