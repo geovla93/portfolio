@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { Commissioner, Martian_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Footer } from "@/components/layout/footer";
@@ -9,17 +9,14 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
-// Commissioner's flare axis gives the display type its engraved terminals.
-const commissioner = Commissioner({
-  variable: "--font-commissioner",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  axes: ["FLAR", "VOLM"],
 });
 
-const martianMono = Martian_Mono({
-  variable: "--font-martian-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  axes: ["wdth"],
 });
 
 const description =
@@ -99,13 +96,13 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body
         className={cn(
-          commissioner.variable,
-          martianMono.variable,
+          geistSans.variable,
+          geistMono.variable,
           "font-sans antialiased",
         )}
       >
         <div className="isolate">
-          <ThemeProvider defaultTheme="dark">
+          <ThemeProvider>
             <Header />
             {children}
             <Footer />
