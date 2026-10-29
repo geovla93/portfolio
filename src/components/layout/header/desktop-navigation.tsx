@@ -22,13 +22,16 @@ export function DesktopNavigation({
 }: DesktopNavigationProps) {
   return (
     <NavigationMenu
-      className={cn("hidden items-center space-x-8 md:flex", className)}
+      className={cn("mr-2 hidden items-center md:flex", className)}
       {...props}
     >
-      <NavigationMenuList>
+      <NavigationMenuList className="gap-0">
         {navLinks.map((link) => (
           <NavigationMenuItem key={link.hash}>
-            <NavigationMenuLink render={<Link href={{ hash: link.hash }} />}>
+            <NavigationMenuLink
+              render={<Link href={{ hash: link.hash }} />}
+              className="hover:text-primary focus:text-primary px-3 py-2 text-[0.9375rem] font-medium hover:bg-transparent focus:bg-transparent"
+            >
               {link.label}
             </NavigationMenuLink>
           </NavigationMenuItem>

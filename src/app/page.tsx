@@ -6,7 +6,7 @@ import { Projects } from "@/components/sections/projects";
 
 export default function HomePage() {
   return (
-    <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:px-10">
+    <main>
       <Hero />
       <About />
       <Experience />

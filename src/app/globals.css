@@ -3,119 +3,72 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Light: the printed note. Intaglio-blue ink on cool security paper. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.1884 0.0128 248.5103);
-  --card: oklch(0.9784 0.0011 197.1387);
-  --card-foreground: oklch(0.1884 0.0128 248.5103);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.1884 0.0128 248.5103);
-  --primary: oklch(0.6723 0.1606 244.9955);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.1884 0.0128 248.5103);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.9222 0.0013 286.3737);
-  --muted-foreground: oklch(0.1884 0.0128 248.5103);
-  --accent: oklch(0.9392 0.0166 250.8453);
-  --accent-foreground: oklch(0.6723 0.1606 244.9955);
-  --destructive: oklch(0.6188 0.2376 25.7658);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9317 0.0118 231.6594);
-  --input: oklch(0.9809 0.0025 228.7836);
-  --ring: oklch(0.6818 0.1584 243.354);
-  --chart-1: oklch(0.6723 0.1606 244.9955);
-  --chart-2: oklch(0.6907 0.1554 160.3454);
-  --chart-3: oklch(0.8214 0.16 82.5337);
-  --chart-4: oklch(0.7064 0.1822 151.7125);
-  --chart-5: oklch(0.5919 0.2186 10.5826);
-  --sidebar: oklch(0.9784 0.0011 197.1387);
-  --sidebar-foreground: oklch(0.1884 0.0128 248.5103);
-  --sidebar-primary: oklch(0.6723 0.1606 244.9955);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.9392 0.0166 250.8453);
-  --sidebar-accent-foreground: oklch(0.6723 0.1606 244.9955);
-  --sidebar-border: oklch(0.9271 0.0101 238.5177);
-  --sidebar-ring: oklch(0.6818 0.1584 243.354);
-  --radius: 0.5rem;
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-sm:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-md:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-lg:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xl:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  --background: oklch(0.956 0.007 165);
+  --foreground: oklch(0.29 0.085 268);
+  --card: oklch(0.982 0.004 165);
+  --card-foreground: oklch(0.29 0.085 268);
+  --popover: oklch(0.982 0.004 165);
+  --popover-foreground: oklch(0.29 0.085 268);
+  --primary: oklch(0.52 0.135 42);
+  --primary-foreground: oklch(0.985 0.006 80);
+  --secondary: oklch(0.29 0.085 268);
+  --secondary-foreground: oklch(0.982 0.004 165);
+  --muted: oklch(0.925 0.01 200);
+  --muted-foreground: oklch(0.43 0.05 265);
+  --accent: oklch(0.915 0.016 250);
+  --accent-foreground: oklch(0.29 0.085 268);
+  --destructive: oklch(0.53 0.2 27);
+  --destructive-foreground: oklch(0.985 0.006 80);
+  --border: oklch(0.83 0.02 250);
+  --input: oklch(0.74 0.03 255);
+  --ring: oklch(0.52 0.135 42);
+
+  /* Engraving inks */
+  --line: oklch(0.36 0.08 268 / 0.5);
+  --line-faint: oklch(0.36 0.08 268 / 0.24);
+  --iris: oklch(0.5 0.08 185 / 0.62);
+  --microprint: oklch(0.36 0.07 268 / 0.62);
+  --portrait: url("/images/portrait-engraved-light.webp");
+
+  --radius: 0.125rem;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Dark: the steel intaglio plate the page is printed from. */
 .dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(0.9328 0.0025 228.7857);
-  --card: oklch(0.2097 0.008 274.5332);
-  --card-foreground: oklch(0.8853 0 0);
-  --popover: oklch(0 0 0);
-  --popover-foreground: oklch(0.9328 0.0025 228.7857);
-  --primary: oklch(0.6692 0.1607 245.011);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.9622 0.0035 219.5331);
-  --secondary-foreground: oklch(0.1884 0.0128 248.5103);
-  --muted: oklch(0.209 0 0);
-  --muted-foreground: oklch(0.5637 0.0078 247.9662);
-  --accent: oklch(0.1928 0.0331 242.5459);
-  --accent-foreground: oklch(0.6692 0.1607 245.011);
-  --destructive: oklch(0.6188 0.2376 25.7658);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.2674 0.0047 248.0045);
-  --input: oklch(0.302 0.0288 244.8244);
-  --ring: oklch(0.6818 0.1584 243.354);
-  --chart-1: oklch(0.6723 0.1606 244.9955);
-  --chart-2: oklch(0.6907 0.1554 160.3454);
-  --chart-3: oklch(0.8214 0.16 82.5337);
-  --chart-4: oklch(0.7064 0.1822 151.7125);
-  --chart-5: oklch(0.5919 0.2186 10.5826);
-  --sidebar: oklch(0.2097 0.008 274.5332);
-  --sidebar-foreground: oklch(0.8853 0 0);
-  --sidebar-primary: oklch(0.6818 0.1584 243.354);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.1928 0.0331 242.5459);
-  --sidebar-accent-foreground: oklch(0.6692 0.1607 245.011);
-  --sidebar-border: oklch(0.3795 0.022 240.5943);
-  --sidebar-ring: oklch(0.6818 0.1584 243.354);
-  --radius: 0.5rem;
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-sm:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-md:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-lg:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xl:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+  --background: oklch(0.165 0.012 250);
+  --foreground: oklch(0.93 0.008 240);
+  --card: oklch(0.2 0.014 250);
+  --card-foreground: oklch(0.93 0.008 240);
+  --popover: oklch(0.2 0.014 250);
+  --popover-foreground: oklch(0.93 0.008 240);
+  --primary: oklch(0.73 0.12 52);
+  --primary-foreground: oklch(0.18 0.025 50);
+  --secondary: oklch(0.93 0.008 240);
+  --secondary-foreground: oklch(0.165 0.012 250);
+  --muted: oklch(0.235 0.014 250);
+  --muted-foreground: oklch(0.73 0.02 245);
+  --accent: oklch(0.255 0.016 250);
+  --accent-foreground: oklch(0.93 0.008 240);
+  --destructive: oklch(0.7 0.17 25);
+  --destructive-foreground: oklch(0.18 0.025 25);
+  --border: oklch(0.31 0.016 250);
+  --input: oklch(0.42 0.02 250);
+  --ring: oklch(0.73 0.12 52);
+
+  --line: oklch(0.84 0.018 240 / 0.42);
+  --line-faint: oklch(0.84 0.018 240 / 0.2);
+  --iris: oklch(0.76 0.07 180 / 0.55);
+  --microprint: oklch(0.8 0.02 240 / 0.5);
+  --portrait: url("/images/portrait-engraved-dark.webp");
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-commissioner);
+  --font-display: var(--font-commissioner);
+  --font-mono: var(--font-martian-mono);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -136,40 +89,144 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-line: var(--line);
+  --color-iris: var(--iris);
+  --color-microprint: var(--microprint);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 2);
+  --radius-xl: calc(var(--radius) * 3);
 
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
+  --ease-expo: var(--ease-expo);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/60;
+  }
+  html {
+    scroll-padding-top: 5rem;
+    scrollbar-color: var(--input) var(--background);
   }
   body {
     @apply bg-background text-foreground;
+    font-variation-settings: "FLAR" 0;
+    font-feature-settings: "kern";
+    caret-color: var(--primary);
   }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+  }
+}
+
+@utility font-engraved {
+  font-family: var(--font-commissioner);
+  font-variation-settings:
+    "FLAR" 100,
+    "VOLM" var(--volm, 70);
+}
+
+@utility lattice {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 88rem;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Data set in the mono: labels, dates, serials. */
+@utility data-label {
+  font-family: var(--font-martian-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variation-settings: "wdth" 87.5;
+}
+
+/* A rule made of tiny repeating text, as on a security document. Layered
+   so utilities (border-t-0, bg-*) can adjust it per placement. */
+@layer components {
+  .microprint {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-block: 2px;
+    border-block: 1px solid var(--border);
+    font-family: var(--font-martian-mono);
+    font-size: 6.5px;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-variation-settings: "wdth" 75;
+    color: var(--microprint);
+    user-select: none;
+  }
+}
+
+/* Guilloché lines engrave themselves once, on load. */
+.engrave use {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: engrave 2.6s var(--ease-expo) forwards;
+  animation-delay: calc(var(--i, 0) * 24ms + 120ms);
+}
+
+@keyframes engrave {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The theme switch runs the next plate through the press, top to bottom. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: plate-press 620ms var(--ease-expo) both;
+}
+
+@keyframes plate-press {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .engrave use {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.portrait-engraving {
+  background-color: var(--foreground);
+  mask-image: var(--portrait);
+  mask-size: cover;
+  mask-position: center;
+  mask-repeat: no-repeat;
 }

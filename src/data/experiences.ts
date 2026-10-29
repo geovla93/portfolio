@@ -1,18 +1,40 @@
 export type Experience = {
   title: string;
   company: string;
-  period: string;
-  description: string;
+  /** "YYYY-MM" */
+  start: string;
+  /** "YYYY-MM", or absent for the current role. */
+  end?: string;
+  summary: string;
+  scope: { label: string; items: string[] }[];
   technologies: string[];
 };
 
+// The CTO title is listed on cyberscope.io/about-us without a start date, so
+// it sits on the role that began in June 2025 until the date is confirmed.
 export const experiences = [
   {
-    title: "Vice President of Product",
+    title: "Chief Technology Officer & Vice President, Product",
     company: "Cyberscope",
-    period: "June 2025 - Present",
-    description:
-      "Leading the vision and execution of Cyberscope's blockchain security SaaS platforms, I define the product roadmap and prioritize features that drive both customer value and market differentiation. I coordinate engineering, auditing, and design teams to deliver scalable, secure solutions—aligning technical efforts with evolving compliance requirements and business objectives. My work has accelerated platform growth and improved operational efficiency by embedding security best practices into every stage of development.",
+    start: "2025-06",
+    summary:
+      "I lead the vision and execution of Cyberscope's blockchain security SaaS platforms.",
+    scope: [
+      {
+        label: "Product",
+        items: [
+          "Define the product roadmap and prioritize features for customer value and market differentiation.",
+          "Align technical work with evolving compliance requirements and business objectives.",
+        ],
+      },
+      {
+        label: "Leadership",
+        items: [
+          "Coordinate the engineering, auditing, and design teams that deliver the platforms.",
+          "Build security best practices into every stage of development.",
+        ],
+      },
+    ],
     technologies: [
       "React",
       "Next.js",
@@ -27,9 +49,47 @@ export const experiences = [
   {
     title: "Software Engineer",
     company: "Cyberscope",
-    period: "November 2022 - May 2025",
-    description:
-      "Designed and implemented core web platform features using Next.js, Node.js, and MongoDB, ensuring high performance and maintainability. Conducted formal smart contract audits—identifying critical Solidity vulnerabilities and advising on remediation in DeFi and NFT projects. Enhanced internal auditing tools, streamlining vulnerability analysis workflows and bolstering overall protocol security.",
+    start: "2022-11",
+    end: "2025-05",
+    summary:
+      "I built core features of Cyberscope's web platform and ran formal smart contract audits.",
+    scope: [
+      {
+        label: "Engineering",
+        items: [
+          "Designed and implemented core platform features in Next.js, Node.js, and MongoDB, built for performance and maintainability.",
+          "Improved internal auditing tools to streamline vulnerability analysis.",
+        ],
+      },
+      {
+        label: "Security",
+        items: [
+          "Ran formal smart contract audits of DeFi and NFT projects.",
+          "Identified critical Solidity vulnerabilities and advised teams on remediation.",
+        ],
+      },
+    ],
     technologies: ["React", "Next.js", "Node.js", "MongoDB", "Solidity"],
   },
 ] as const satisfies Experience[];
+
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+/** "2025-06" → "Jun 2025" */
+export function formatMonth(value: string) {
+  const [year, month] = value.split("-").map(Number);
+  return `${monthNames[month - 1]} ${year}`;
+}
