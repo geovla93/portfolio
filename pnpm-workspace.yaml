@@ -3,3 +3,6 @@ minimumReleaseAgeStrict: true
 allowBuilds:
   sharp: false
   unrs-resolver: false
+overrides:
+  "@babel/helper-compilation-targets>browserslist": 4.28.9
+  "@typescript-eslint/typescript-estree>tinyglobby": 0.2.17
