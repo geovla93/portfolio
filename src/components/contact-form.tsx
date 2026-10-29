@@ -1,233 +1,148 @@
 "use client";
 
 import { SendIcon } from "lucide-react";
-import Script from "next/script";
-import {
-  useActionState,
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { useRef } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
-import { sendContactRequest } from "@/lib/actions";
+import { useAppForm } from "@/components/form";
+import type { TurnstileFieldHandle } from "@/components/form/turnstile-field";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { checkEmailDomain, sendContactRequest } from "@/lib/actions";
 import { getZodConstraint } from "@/lib/constraint";
 import { ContactFormSchema } from "@/lib/schemas";
-import { TURNSTILE_ACTION, TURNSTILE_SITE_KEY } from "@/lib/turnstile-config";
 
 const constraint = getZodConstraint(ContactFormSchema);
 
-type ContactFormProps = React.ComponentProps<"form">;
-
-type Turnstile = {
-  render: (
-    container: HTMLElement,
-    options: {
-      sitekey: string;
-      action: string;
-      size: "flexible";
-      "response-field": false;
-      callback: (token: string) => void;
-      "expired-callback": () => void;
-      "timeout-callback": () => void;
-      "error-callback": () => boolean;
-    },
-  ) => string;
-  reset: (widgetId: string) => void;
-  remove: (widgetId: string) => void;
+const defaultValues = {
+  name: "",
+  email: "",
+  message: "",
+  "cf-turnstile-response": "",
 };
 
-declare global {
-  interface Window {
-    turnstile?: Turnstile;
-  }
-}
+type ContactFormProps = React.ComponentProps<"form">;
 
 export function ContactForm(props: ContactFormProps) {
-  const formId = useId();
-  const turnstileContainer = useRef<HTMLDivElement>(null);
-  const widgetId = useRef<string | null>(null);
-  const [token, setToken] = useState("");
-  const [verificationError, setVerificationError] = useState("");
-  const [formState, formAction, isPending] = useActionState(
-    async (...args: Parameters<typeof sendContactRequest>) => {
+  const turnstile = useRef<TurnstileFieldHandle>(null);
+  const form = useAppForm({
+    defaultValues,
+    // Always validate on submit. Otherwise a submit during the email check's
+    // debounce is silently dropped because the form is still validating.
+    canSubmitWhenInvalid: true,
+    onSubmit: async ({ value, formApi }) => {
+      const formData = new FormData();
+      for (const [name, entry] of Object.entries(value)) {
+        formData.set(name, entry);
+      }
+
+      let response: Awaited<ReturnType<typeof sendContactRequest>>;
       try {
-        return await sendContactRequest(...args);
+        response = await sendContactRequest(formData);
+      } catch {
+        response = {
+          success: false,
+          message: "Something went wrong. Please try again later.",
+        };
       } finally {
-        setToken("");
-        if (widgetId.current !== null) {
-          window.turnstile?.reset(widgetId.current);
-        }
+        // Turnstile tokens are single-use, so every attempt needs a new one.
+        turnstile.current?.reset();
+      }
+
+      if (response.success) {
+        toast.success("Your message has been sent successfully!", {
+          description: "I'll get back to you as soon as possible.",
+        });
+        formApi.reset();
+        return;
+      }
+
+      // Server errors clear as soon as the field is edited or revalidated.
+      for (const [name, messages] of Object.entries(response.errors ?? {})) {
+        formApi.setFieldMeta(name as keyof typeof value, (meta) => ({
+          ...meta,
+          errorMap: { ...meta.errorMap, onServer: { message: messages?.[0] } },
+        }));
+      }
+
+      if (response.message) {
+        toast.error("There was an error with your submission.", {
+          description: response.message,
+        });
       }
     },
-    null,
-  );
-
-  const renderTurnstile = useCallback(() => {
-    if (
-      !window.turnstile ||
-      !turnstileContainer.current ||
-      widgetId.current !== null
-    ) {
-      return;
-    }
-
-    widgetId.current = window.turnstile.render(turnstileContainer.current, {
-      sitekey: TURNSTILE_SITE_KEY,
-      action: TURNSTILE_ACTION,
-      size: "flexible",
-      "response-field": false,
-      callback: (response) => {
-        setToken(response);
-        setVerificationError("");
-      },
-      "expired-callback": () => setToken(""),
-      "timeout-callback": () => setToken(""),
-      "error-callback": () => {
-        setToken("");
-        setVerificationError("Verification failed. Please try again.");
-        return true;
-      },
-    });
-  }, []);
-
-  useEffect(() => {
-    renderTurnstile();
-
-    return () => {
-      if (widgetId.current !== null) {
-        window.turnstile?.remove(widgetId.current);
-        widgetId.current = null;
-      }
-    };
-  }, [renderTurnstile]);
-
-  useEffect(() => {
-    if (!formState) return;
-
-    if (formState.success) {
-      toast.success("Your message has been sent successfully!", {
-        description: "I'll get back to you as soon as possible.",
-      });
-    }
-
-    if (!formState.success && formState.message) {
-      toast.error("There was an error with your submission.", {
-        description: formState.message,
-      });
-    }
-  }, [formState]);
+  });
 
   return (
-    <form id={formId} action={formAction} {...props}>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        onReady={renderTurnstile}
-        onError={() => {
-          setToken("");
-          setVerificationError(
-            "Verification could not load. Refresh the page and try again.",
-          );
-        }}
-      />
-      <input type="hidden" name="cf-turnstile-response" value={token} />
-      <FieldGroup>
-        <Field data-invalid={!!formState?.errors?.name}>
-          <FieldLabel htmlFor={`${formId}-name`}>Name</FieldLabel>
-          <Input
-            id={`${formId}-name`}
+    <form
+      {...props}
+      onSubmit={(event) => {
+        event.preventDefault();
+        void form.handleSubmit();
+      }}
+    >
+      <form.AppForm>
+        <FieldGroup>
+          <form.AppField
             name="name"
-            defaultValue={formState?.values?.name}
-            placeholder="Your full name"
-            autoComplete="name"
-            aria-describedby={`${formId}-name-error`}
-            aria-invalid={!!formState?.errors?.name}
-            {...constraint.name}
-          />
-          {formState?.errors?.name && (
-            <FieldError id={`${formId}-name-error`}>
-              {formState.errors.name.at(0)}
-            </FieldError>
-          )}
-        </Field>
-        <Field data-invalid={!!formState?.errors?.email}>
-          <FieldLabel htmlFor={`${formId}-email`}>Email Address</FieldLabel>
-          <Input
-            id={`${formId}-email`}
-            name="email"
-            type="email"
-            defaultValue={formState?.values?.email}
-            placeholder="your.email@example.com"
-            autoComplete="email"
-            aria-describedby={`${formId}-email-error`}
-            aria-invalid={!!formState?.errors?.email}
-            {...constraint.email}
-          />
-          {formState?.errors?.email && (
-            <FieldError id={`${formId}-email-error`}>
-              {formState.errors.email.at(0)}
-            </FieldError>
-          )}
-        </Field>
-
-        <Field data-invalid={!!formState?.errors?.message}>
-          <FieldLabel htmlFor={`${formId}-message`}>Message</FieldLabel>
-          <Textarea
-            id={`${formId}-message`}
-            name="message"
-            defaultValue={formState?.values?.message}
-            placeholder="Tell me about your project or just say hello..."
-            className="min-h-24 resize-none"
-            aria-describedby={`${formId}-message-error`}
-            aria-invalid={!!formState?.errors?.message}
-            {...constraint.message}
-          />
-          {formState?.errors?.message && (
-            <FieldError id={`${formId}-message-error`}>
-              {formState.errors.message.at(0)}
-            </FieldError>
-          )}
-        </Field>
-        <Field data-invalid={!!verificationError}>
-          <div ref={turnstileContainer} />
-          {verificationError && <FieldError>{verificationError}</FieldError>}
-          <noscript>
-            Enable JavaScript to verify and send your message.
-          </noscript>
-        </Field>
-        <Field>
-          <Button
-            type="submit"
-            size="lg"
-            disabled={isPending || !token}
-            aria-disabled={isPending || !token}
+            validators={{ onChange: ContactFormSchema.shape.name }}
           >
-            {isPending ? (
-              <>
-                <Spinner />
-                Submitting...
-              </>
-            ) : (
-              <>
-                Send Message
-                <SendIcon className="size-5" />
-              </>
+            {(field) => (
+              <field.TextField
+                label="Name"
+                placeholder="Your full name"
+                autoComplete="name"
+                {...constraint.name}
+              />
             )}
-          </Button>
-        </Field>
-      </FieldGroup>
+          </form.AppField>
+          <form.AppField
+            name="email"
+            validators={{
+              onChange: ContactFormSchema.shape.email,
+              onChangeAsync: ({ value }) => checkEmailDomain(value),
+              onChangeAsyncDebounceMs: 500,
+            }}
+          >
+            {(field) => (
+              <field.TextField
+                label="Email Address"
+                type="email"
+                placeholder="your.email@example.com"
+                autoComplete="email"
+                {...constraint.email}
+              />
+            )}
+          </form.AppField>
+          <form.AppField
+            name="message"
+            validators={{ onChange: ContactFormSchema.shape.message }}
+          >
+            {(field) => (
+              <field.TextareaField
+                label="Message"
+                placeholder="Tell me about your project or just say hello..."
+                className="min-h-24 resize-none"
+                {...constraint.message}
+              />
+            )}
+          </form.AppField>
+          <form.AppField name="cf-turnstile-response">
+            {(field) => <field.TurnstileField ref={turnstile} />}
+          </form.AppField>
+          <form.Subscribe
+            selector={(state) => !state.values["cf-turnstile-response"]}
+          >
+            {(isUnverified) => (
+              <Field>
+                <form.SubmitButton size="lg" disabled={isUnverified}>
+                  Send Message
+                  <SendIcon className="size-5" />
+                </form.SubmitButton>
+              </Field>
+            )}
+          </form.Subscribe>
+        </FieldGroup>
+      </form.AppForm>
     </form>
   );
 }
