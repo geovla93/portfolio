@@ -56,7 +56,7 @@ export const projects = [
   {
     title: "geovla.dev",
     summary:
-      "This portfolio. The guilloché and the engraved portrait are generated in code, not stock art.",
+      "This portfolio: a single-page Next.js site whose contact form is verified with Cloudflare Turnstile and delivered through Resend.",
     image: "/images/geovla-dev.png",
     imageAlt: "The geovla.dev home page",
     address: "geovla.dev",
