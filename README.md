@@ -37,8 +37,8 @@ Provide appropriate values in your local environment before building or testing.
 Do not commit local environment files.
 
 The contact form uses Cloudflare Turnstile with the `contact` action. Its server
-action calls Siteverify before running the existing BotID check and email handler,
-and requires a successful response with the exact action and an allowed hostname.
+action calls Siteverify before validating the fields and sending any email, and
+requires a successful response with the exact action and an allowed hostname.
 Tokens are cleared and the widget is reset after every submission attempt.
 
 The form uses TanStack Form. While the visitor types, the email field runs a

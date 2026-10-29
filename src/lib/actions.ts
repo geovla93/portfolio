@@ -1,6 +1,5 @@
 "use server";
 
-import { checkBotId } from "botid/server";
 import { z } from "zod";
 
 import { EMAIL_DOMAIN_NOT_FOUND, emailDomainExists } from "@/lib/email-domain";
@@ -74,14 +73,6 @@ export async function sendContactRequest(
     return {
       success: false,
       message: "Please complete the verification and try again.",
-    };
-  }
-
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return {
-      success: false,
-      message: "Bot submissions are not allowed.",
     };
   }
 
