@@ -110,7 +110,7 @@ export function Projects() {
     >
       <h2
         id="projects-title"
-        className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
+        className="text-4xl leading-tight tracking-tight text-balance sm:text-5xl"
       >
         Shipped work, and how it&apos;s built
       </h2>

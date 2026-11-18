@@ -14,7 +14,7 @@ export function Contact() {
     >
       <h2
         id="contact-title"
-        className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
+        className="text-4xl leading-tight tracking-tight text-balance sm:text-5xl"
       >
         Hiring, or building something?
       </h2>

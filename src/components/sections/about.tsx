@@ -1,5 +1,4 @@
 import { ArrowUpRightIcon } from "lucide-react";
-import Image from "next/image";
 
 import { ButtonLink } from "@/components/button-link";
 import { GithubIcon } from "@/components/icons/github";
@@ -9,28 +8,17 @@ export function About() {
     <section
       id="about"
       aria-labelledby="about-title"
-      className="border-t py-16 sm:py-24"
+      className="py-16 sm:py-24"
     >
       <div className="grid gap-10 md:grid-cols-12 md:gap-12">
-        <div className="md:col-span-4">
-          <Image
-            src="/images/me.jpg"
-            alt="Portrait of George Vlassis in a grey coat and dark turtleneck"
-            width={578}
-            height={870}
-            sizes="(min-width: 768px) 320px, 224px"
-            className="h-auto w-full max-w-56 rounded-lg border md:max-w-xs"
-          />
-        </div>
-
-        <div className="md:col-span-8">
-          <h2
-            id="about-title"
-            className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
-          >
-            Engineering and product, under one title
-          </h2>
-          <div className="mt-6 max-w-lg space-y-4 leading-relaxed text-pretty">
+        <h2
+          id="about-title"
+          className="max-w-sm text-4xl leading-tight tracking-tight text-balance sm:text-5xl md:col-span-5"
+        >
+          Engineering and product, under one title
+        </h2>
+        <div className="md:col-span-7">
+          <div className="max-w-lg space-y-4 leading-relaxed text-pretty">
             <p>
               At Cyberscope I set the product roadmap for our blockchain
               security SaaS platforms, and coordinate the engineering, auditing,

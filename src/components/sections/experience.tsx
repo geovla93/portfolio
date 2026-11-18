@@ -57,7 +57,7 @@ export function Experience() {
     >
       <h2
         id="experience-title"
-        className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
+        className="text-4xl leading-tight tracking-tight text-balance sm:text-5xl"
       >
         From smart contract audits to CTO
       </h2>
