@@ -26,6 +26,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": personId,
       name: site.name,
+      alternateName: "Georgios Vlassis",
       url: site.url,
       image: `${site.url}/images/me.jpg`,
       description: site.description,
@@ -50,7 +51,7 @@ const jsonLd = {
       publisher: { "@id": personId },
     },
     {
-      "@type": "WebPage",
+      "@type": "ProfilePage",
       "@id": pageId,
       url: site.url,
       name: site.title,

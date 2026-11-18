@@ -3,9 +3,9 @@
 export const site = {
   url: "https://geovla.dev",
   name: "George Vlassis",
-  title: "George Vlassis — Engineering & Product, Blockchain Security",
+  title: "George Vlassis — Portfolio | CTO at Cyberscope",
   description:
-    "CTO & VP, Product at Cyberscope. George Vlassis builds full-stack platforms, leads engineering teams, and audits Solidity smart contracts.",
+    "George Vlassis is a software engineer and CTO & VP of Product at Cyberscope in Ioannina, Greece. Explore his work in full-stack development and blockchain security.",
   language: "en",
   locale: "en_US",
 } as const;
